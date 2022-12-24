@@ -1,17 +1,15 @@
-// Generated @DateTime.Now.ToString()
+// Generated @Model.Now.ToString()
 
-@model DatabaseMigration.MigrationContext
-
-namespace @Model.ProjectName
+namespace @Model.Migration.ProjectName
 {
-    public class @(Model.Table.Name)DataTableCreator
+    public class @(Model.Migration.Table.Name)DataTableCreator
     {
         public System.Data.DataTable Create()
         {
             var dataTable = new System.Data.DataTable();
-            dataTable.TableName = "@Model.Table.Name";
+            dataTable.TableName = "@Model.Migration.Table.Name";
 
-            @foreach(var column in Model.Table.Columns)
+            @foreach(var column in Model.Migration.Table.Columns)
             {
             @:dataTable.Columns.Add(new System.Data.DataColumn("@column.Name"));
             }

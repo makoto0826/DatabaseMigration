@@ -1,10 +1,8 @@
-// Generated @DateTime.Now.ToString()
-@model DatabaseMigration.MigrationContext
-
+// Generated @Model.Now.ToString()
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace @Model.ProjectName
+namespace @Model.Migration.ProjectName
 {
     public static class Program
     {
@@ -44,10 +42,10 @@ namespace @Model.ProjectName
 
         public static async Task RunAsync(string filePath,string connectionString)
         {
-            var dataTableCreator = new @(Model.Table.Name)DataTableCreator();
+            var dataTableCreator = new @(Model.Migration.Table.Name)DataTableCreator();
             var dataTable = dataTableCreator.Create();
 
-            var fileMapper = new @(Model.SourceName)FileMapper(filePath);
+            var fileMapper = new @(Model.Migration.SourceName)FileMapper(filePath);
             fileMapper.Map(dataTable);
 
             using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);

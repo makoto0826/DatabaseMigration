@@ -1,8 +1,6 @@
-﻿using Razor.Templating.Core;
-using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using RazorEngineCore;
 using DatabaseMigration.Data;
 
 namespace DatabaseMigration;
@@ -11,39 +9,35 @@ public class Program
 {
     public static async Task Main()
     {
-        try
-        {
-            await RunAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            Console.ReadKey();
-        }
-    }
-
-    public static async Task RunAsync()
-    {
         var services = new ServiceCollection();
-
         services.AddLogging(options => options.AddConsole());
-        services.AddMvcCore().AddRazorRuntimeCompilation();
-        services.Configure<MvcRazorRuntimeCompilationOptions>(options => options.FileProviders.Add(new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "Templates"))));
-        services.AddRazorTemplating();
 
         var provider = services.BuildServiceProvider();
         var logger = provider.GetRequiredService<ILogger<Program>>();
-
         logger.LogInformation($"実行フォルダ:{AppContext.BaseDirectory}");
 
-        var context = new MigrationContext()
+        try
         {
-            ProjectName = "Sample",
-            SourceName = "User1",
-            Table = new TableMapping
+            await RunAsync(provider);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+        }
+    }
+
+    public static async Task RunAsync(ServiceProvider provider)
+    {
+        var context = new TemplateContext
+        {
+            Migration = new MigrationContext()
             {
-                Name = "User",
-                Columns = new List<ColumnMapping>
+                ProjectName = "Sample",
+                SourceName = "User1",
+                Table = new TableMapping
+                {
+                    Name = "User",
+                    Columns = new List<ColumnMapping>
                 {
                     new ColumnMapping
                     {
@@ -65,26 +59,30 @@ public class Program
                         GenerationMethodName = "DateTime.Now"
                     }
                 }
+                }
             }
         };
 
+        var razorEngine = new RazorEngine();
+        var basePath = AppContext.BaseDirectory;
+        var builderAction = (IRazorEngineCompilationOptionsBuilder builder) => { };
 
-        var appSettingContent = await RazorTemplateEngine.RenderAsync($"/Templates/AppSettings.cshtml");
-        var projectContent = await RazorTemplateEngine.RenderAsync($"/Templates/Project.{context.DatabaseType}.cshtml");
-        var programContent = await RazorTemplateEngine.RenderAsync($"/Templates/Program.{context.DatabaseType}.cshtml", context);
-        var fileMapperContent = await RazorTemplateEngine.RenderAsync($"/Templates/FileMapper.{context.DatabaseType}.cshtml", context);
-        var dataTableCreatorContent = await RazorTemplateEngine.RenderAsync($"/Templates/DataTableCreator.{context.DatabaseType}.cshtml", context);
-        var stringExtensionsContent = await RazorTemplateEngine.RenderAsync("/Templates/StringExtensions.cshtml", context);
+        var appSettingContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/AppSettings.cshtml");
+        var projectContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Project.{context.Migration.DatabaseType}.cshtml");
+        var programContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Program.{context.Migration.DatabaseType}.cshtml", builderAction, context);
+        var fileMapperContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/FileMapper.{context.Migration.DatabaseType}.cshtml", builderAction, context);
+        var dataTableCreatorContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/DataTableCreator.{context.Migration.DatabaseType}.cshtml", builderAction, context);
+        var extensionsContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Extensions.cshtml", builderAction, context);
 
-        var fileGenerator = FileGenerator.Create(context, provider.GetRequiredService<ILogger<FileGenerator>>());
+        var fileGenerator = FileGenerator.Create(context.Migration, provider.GetRequiredService<ILogger<FileGenerator>>());
         await fileGenerator.GenerateAsync(new List<(string, string)>
         {
             new ($"appsettings.json",appSettingContent),
-            new ($"{context.ProjectName}.csproj",projectContent),
+            new ($"{context.Migration.ProjectName}.csproj",projectContent),
             new ("Program.cs",programContent),
             new ("FileMapper.cs",fileMapperContent),
             new ("DataTableCreator.cs",dataTableCreatorContent),
-            new ("StringExtensions.cs",stringExtensionsContent)
+            new ("Extensions.cs",extensionsContent)
         });
     }
 }
