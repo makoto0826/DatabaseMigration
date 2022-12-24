@@ -6,7 +6,7 @@ public class MigrationContext
 {
     public string ProjectName { get; init; }
 
-    public string SourceName{get;init;}
+    public string SourceName { get; init; }
 
     public DatabaseType DatabaseType { get; set; }
 
