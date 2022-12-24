@@ -1,0 +1,72 @@
+// Generated @DateTime.Now.ToString()
+@model DatabaseMigration.MigrationContext
+
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+
+namespace @Model.ProjectName
+{
+    public static class Program
+    {
+        public static async Task Main(string []args)
+        {
+            if(args[0].Length != 1)
+            {
+                throw new System.ArgumentException("変換元ファイルパスが指定されていません");
+            }
+
+            var filePath = args[0];
+
+            if(!System.IO.File.Exists(filePath))
+            {
+                throw new System.ArgumentException("変換元ファイルパスが存在しません");
+            }
+
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var connectionString = config.GetConnectionString("Database");
+
+            if(String.IsNullOrEmpty(connectionString))
+            {
+                throw new System.InvalidOperationException("データベースの接続情報がありません");
+            }
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            System.Console.WriteLine($"移行開始:{System.DateTime.Now.ToString()}");
+            await RunAsync(filePath,connectionString);
+            watch.Stop();
+            System.Console.WriteLine($"移行終了:{System.DateTime.Now.ToString()} {watch.ElapsedMilliseconds}ミリ秒");
+        }
+
+        public static async Task RunAsync(string filePath,string connectionString)
+        {
+            var dataTableCreator = new @(Model.Table.Name)DataTableCreator();
+            var dataTable = dataTableCreator.Create();
+
+            var fileMapper = new @(Model.SourceName)FileMapper(filePath);
+            fileMapper.Map(dataTable);
+
+            using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                using var bulkCopy = new SqlBulkCopy(connection,Microsoft.Data.SqlClient.SqlBulkCopyOptions.Default,transaction as Microsoft.Data.SqlClient.SqlTransaction);
+                await bulkCopy.WriteToServerAsync(dataTable);
+                await transaction.CommitAsync();
+            }
+            catch(Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+// Generated @DateTime.Now.ToString()
+
+@model DatabaseMigration.MigrationContext
+
+namespace @Model.ProjectName
+{
+    public class @(Model.Table.Name)DataTableCreator
+    {
+        public System.Data.DataTable Create()
+        {
+            var dataTable = new System.Data.DataTable();
+            dataTable.TableName = "@Model.Table.Name";
+
+            @foreach(var column in Model.Table.Columns)
+            {
+            @:dataTable.Columns.Add(new System.Data.DataColumn("@column.Name"));
+            }
+
+            return dataTable;
+        }
+    }
+}

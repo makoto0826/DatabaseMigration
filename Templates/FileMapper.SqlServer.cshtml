@@ -1,0 +1,36 @@
+// Generated @DateTime.Now.ToString()
+
+@model DatabaseMigration.MigrationContext
+
+namespace @Model.ProjectName
+{
+    public class @(Model.SourceName)FileMapper
+    {
+        private readonly string _filePath;
+
+        public @(Model.SourceName)FileMapper(string filePath)
+        {
+            _filePath = filePath;
+        }
+
+        public void Map(System.Data.DataTable dataTable)
+        {
+            using var reader = new System.IO.StreamReader(_filePath,System.Text.Encoding.GetEncoding("Shift-JIS"));
+            string? line = null;
+            var lineCount = 1;
+
+            while((line = reader.ReadLine()) != null)
+            {
+                var row = dataTable.NewRow();
+
+                @foreach(var column in Model.Table.Columns)
+                {
+                    Html.RenderPartial($"Column.{Model.DatabaseType}.cshtml",column);
+                }
+
+                lineCount++;
+                dataTable.Rows.Add(row);
+            }
+        }
+    }
+}

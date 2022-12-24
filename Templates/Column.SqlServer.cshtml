@@ -1,0 +1,35 @@
+@model DatabaseMigration.Data.ColumnMapping
+@{var name = @Model.Name.ToLower();}
+
+@functions {
+    public string AppendConvertMethodIf(string value,string? convertMethodName)
+    {
+        if(String.IsNullOrEmpty(convertMethodName))
+        {
+            return value;
+        }
+        else
+        {
+            return $"{value}.{convertMethodName}()";
+        }
+    }
+}
+
+                try
+                {
+                    @if(Model.IsGeneration)
+                    {
+                    @:row["@Model.Name"] = @Model.GenerationMethodName;
+                    }
+                    else
+                    {
+                    @:var @name = line[@Model.StartPosition..@(Model.EndPosition + 1)];
+                    @:row["@Model.Name"] = @AppendConvertMethodIf(name,Model.ConvertMethodName);
+                    }
+                }
+                catch(System.Exception ex)
+                {
+                    System.Console.WriteLine($"{lineCount}行目 開始位置:@(Model.StartPosition) 終了位置:@(Model.EndPosition) 列名:@(Model.Name)");
+                    System.Console.WriteLine(ex.Message);
+                    throw;
+                }
