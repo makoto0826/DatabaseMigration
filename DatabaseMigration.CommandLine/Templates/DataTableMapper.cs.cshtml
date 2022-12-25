@@ -19,13 +19,13 @@ using Microsoft.Extensions.Logging;
 
 namespace @Model.Migration.ProjectName
 {
-    public class @(Model.Migration.SourceName)DataTableMapper
+    public class @(Model.Migration.Table.Name)DataTableMapper
     {
         private readonly string _filePath;
 
         private readonly ILogger _logger;
 
-        public @(Model.Migration.SourceName)DataTableMapper(string filePath,ILogger<@(Model.Migration.SourceName)DataTableMapper> logger)
+        public @(Model.Migration.Table.Name)DataTableMapper(string filePath,ILogger<@(Model.Migration.Table.Name)DataTableMapper> logger)
         {
             _filePath = filePath;
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));

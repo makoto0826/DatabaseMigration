@@ -37,7 +37,7 @@ public class Program
             Migration = new MigrationContext()
             {
                 ProjectName = "Sample",
-                SourceName = "User1",
+                ConnectionString = "Server=localhost;User ID=sa;Password=P@ssw0rd;encrypt=false",
                 Table = new TableMapping
                 {
                     Name = "Users",

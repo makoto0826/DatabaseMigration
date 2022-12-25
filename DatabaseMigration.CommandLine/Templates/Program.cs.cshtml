@@ -69,7 +69,7 @@ namespace @Model.Migration.ProjectName
             var creator = new @(Model.Migration.Table.Name)DataTableCreator(provider.GetRequiredService<ILogger<@(Model.Migration.Table.Name)DataTableCreator>>());
             var dataTable = creator.Create();
 
-            var mapper = new @(Model.Migration.SourceName)DataTableMapper(filePath,provider.GetRequiredService<ILogger<@(Model.Migration.SourceName)DataTableMapper>>());
+            var mapper = new @(Model.Migration.Table.Name)DataTableMapper(filePath,provider.GetRequiredService<ILogger<@(Model.Migration.Table.Name)DataTableMapper>>());
             mapper.Map(dataTable);
 
             using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
