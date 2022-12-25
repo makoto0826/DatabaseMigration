@@ -31,9 +31,11 @@ public class ProjectGenerator
             Directory.CreateDirectory(destinationPath);
         }
 
+        _logger.LogInformation($"プロジェクト名:{project.Name}");
+
         foreach (var (name, content) in result.Items)
         {
-            var path = Path.Combine(_baseDirectoryPath, name);
+            var path = Path.Combine(destinationPath, name);
             _logger.LogInformation($"ファイル作成:{path}");
 
             using var writer = new StreamWriter(path, false);
