@@ -4,11 +4,11 @@ namespace DatabaseMigration.Core.Data;
 
 public class DestinationColumn
 {
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
-    public DbType Type { get; set; }
+    public DbType Type { get; init; }
 
-    public bool IsNull { get; set; }
+    public bool IsNull { get; init; }
 
-    public int Size { get; set; }
+    public int Size { get; init; }
 }

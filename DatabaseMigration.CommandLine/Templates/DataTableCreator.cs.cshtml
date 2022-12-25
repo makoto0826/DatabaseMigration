@@ -1,12 +1,12 @@
 // Generated @Model.Now.ToString()
 using Microsoft.Extensions.Logging;
 
-namespace @Model.Migration.ProjectName
+namespace @Model.Project.Name
 {
-    public class @(Model.Migration.Table.Name)DataTableCreator
+    public class @(Model.Project.Table.Name)DataTableCreator
     {
         private readonly ILogger _logger;
-        public @(Model.Migration.Table.Name)DataTableCreator(ILogger<@(Model.Migration.Table.Name)DataTableCreator> logger)
+        public @(Model.Project.Table.Name)DataTableCreator(ILogger<@(Model.Project.Table.Name)DataTableCreator> logger)
         {
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
         }
@@ -14,9 +14,9 @@ namespace @Model.Migration.ProjectName
         public System.Data.DataTable Create()
         {
             var dataTable = new System.Data.DataTable();
-            dataTable.TableName = "[@Model.Migration.Table.Name]";
+            dataTable.TableName = "[@Model.Project.Table.Name]";
 
-            @foreach(var column in Model.Migration.Table.Columns)
+            @foreach(var column in Model.Project.Table.Columns)
             {
             @:dataTable.Columns.Add(new System.Data.DataColumn("@column.Destination.Name"));
             @:_logger.LogInformation("列を追加:@column.Destination.Name");

@@ -2,13 +2,13 @@ namespace DatabaseMigration.Core.Data;
 
 public class ColumnMapping
 {
-    public bool IsGeneration { get; set; }
+    public bool IsGeneration { get; init; }
 
     public string? GenerationMethod { get; init; }
 
     public string? ConvertMethod { get; init; }
 
-    public SourceColumn Source { get; set; }
+    public required SourceColumn Source { get; init; }
 
-    public DestinationColumn Destination { get; set; }
+    public required DestinationColumn Destination { get; init; }
 }

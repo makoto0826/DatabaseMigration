@@ -17,15 +17,15 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace @Model.Migration.ProjectName
+namespace @Model.Project.Name
 {
-    public class @(Model.Migration.Table.Name)DataTableMapper
+    public class @(Model.Project.Table.Name)DataTableMapper
     {
         private readonly string _filePath;
 
         private readonly ILogger _logger;
 
-        public @(Model.Migration.Table.Name)DataTableMapper(string filePath,ILogger<@(Model.Migration.Table.Name)DataTableMapper> logger)
+        public @(Model.Project.Table.Name)DataTableMapper(string filePath,ILogger<@(Model.Project.Table.Name)DataTableMapper> logger)
         {
             _filePath = filePath;
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
@@ -41,7 +41,7 @@ namespace @Model.Migration.ProjectName
             {
                 var row = dataTable.NewRow();
 
-                @foreach(var column in Model.Migration.Table.Columns)
+                @foreach(var column in Model.Project.Table.Columns)
                 {
                     var name = column.Destination.Name.ToLower();
                     @:try

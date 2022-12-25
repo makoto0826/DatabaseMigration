@@ -2,7 +2,7 @@ namespace DatabaseMigration.Core.Data;
 
 public class SourceColumn
 {
-    public int StartPosition { get; set; }
+    public int StartPosition { get; init; }
 
-    public int EndPosition { get; set; }
+    public int EndPosition { get; init; }
 }

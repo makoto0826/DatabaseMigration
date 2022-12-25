@@ -1,112 +1,48 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RazorEngineCore;
 using DatabaseMigration.Core.Data;
 using System.Data;
-using DatabaseMigration.Core.RazorEngineCore;
-using DatabaseMigration.Core.IO;
-using DatabaseMigration.Core;
+using DatabaseMigration.Core.Template;
+using DatabaseMigration.Core.Generator;
+using DatabaseMigration.Core.Import;
 
 namespace DatabaseMigration.CommandLine;
 
 public class Program
 {
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
         var services = new ServiceCollection();
         services.AddLogging(options => options.AddConsole());
 
         var provider = services.BuildServiceProvider();
         var logger = provider.GetRequiredService<ILogger<Program>>();
-        logger.LogInformation($"実行フォルダ:{AppContext.BaseDirectory}");
+        var baseDirectoryPath = AppContext.BaseDirectory;
+
+        logger.LogInformation($"実行フォルダ:{baseDirectoryPath}");
 
         try
         {
-            await RunAsync(provider);
+            await RunAsync(args[0], baseDirectoryPath, provider);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, "Error");
         }
     }
 
-    public static async Task RunAsync(ServiceProvider provider)
+    public static async Task RunAsync(string excelFilePath, string baseDirectoryPath, ServiceProvider provider)
     {
-        var context = new TemplateContext
+        var importer = new ExcelImporter(provider.GetRequiredService<ILogger<ExcelImporter>>());
+        var generator = new ProjectGenerator(baseDirectoryPath, provider.GetRequiredService<ILogger<ProjectGenerator>>());
+        var engine = new RazorEngineAdapter(Path.Combine(baseDirectoryPath, "Templates"), provider.GetRequiredService<ILogger<RazorEngineAdapter>>());
+
+        var projects = await importer.ImportAsync(excelFilePath);
+
+        foreach (var project in projects)
         {
-            Migration = new MigrationContext()
-            {
-                ProjectName = "Sample",
-                ConnectionString = "Server=localhost;User ID=sa;Password=P@ssw0rd;encrypt=false",
-                Table = new TableMapping
-                {
-                    Name = "Users",
-                    Columns = new List<ColumnMapping>
-                {
-                    new ColumnMapping
-                    {
-                        Source = new SourceColumn
-                        {
-                            StartPosition = 0,
-                            EndPosition = 5,
-                        },
-                        Destination = new DestinationColumn
-                        {
-                            Name = "UserId",
-                            Type = DbType.String
-                        },
-                    },
-                    new ColumnMapping
-                    {
-                        Source = new SourceColumn
-                        {
-                            StartPosition = 5,
-                            EndPosition = 15,
-                        },
-                        Destination = new DestinationColumn
-                        {
-                            Name = "UserName",
-                            Type = DbType.String
-                        },
-                        ConvertMethod = "Trim().ToUpper()"
-                    },
-                    new ColumnMapping
-                    {
-                        IsGeneration = true,
-                        Destination = new DestinationColumn
-                        {
-                            Name = "CreatedAt",
-                            Type = DbType.DateTime,
-                        },
-                        GenerationMethod = "DateTime.Now"
-                    }
-                }
-                }
-            }
-        };
-
-        var razorEngine = new RazorEngine();
-        var nameWithTaskList =
-            new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, "Templates"))
-                .GetFiles()
-                .Select(fileInfo =>
-                {
-                    var sp = fileInfo.Name.Split(new char[] { '.' });
-                    var name = $"{sp[0]}.{sp[1]}";
-
-                    if (sp[1] == "csproj")
-                    {
-                        name = $"{context.Migration.ProjectName}.{sp[1]}";
-                    }
-
-                    var task = razorEngine.RunFromFileAsync(fileInfo.FullName, model: context);
-                    return (name, task);
-                });
-
-        await Task.WhenAll(nameWithTaskList.Select(x => x.task));
-
-        var contents = nameWithTaskList.Select(x => (x.name, x.task.Result)).ToList();
-        var fileGenerator = FileGenerator.Create(context.Migration, provider.GetRequiredService<ILogger<FileGenerator>>());
-        await fileGenerator.GenerateAsync(contents);
+            var result = await engine.RunAsync(new TemplateContext { Project = project });
+            await generator.GenerateAsync(project, result);
+        }
     }
 }

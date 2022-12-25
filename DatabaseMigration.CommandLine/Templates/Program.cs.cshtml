@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace @Model.Migration.ProjectName
+namespace @Model.Project.Name
 {
     public class Program
     {
@@ -26,7 +26,7 @@ namespace @Model.Migration.ProjectName
 
             try 
             {
-                logger.LogInformation("移行プログラム名:@(Model.Migration.ProjectName)");
+                logger.LogInformation("移行プログラム名:@(Model.Project.Name)");
 
                 if(String.IsNullOrEmpty(connectionString))
                 {
@@ -48,7 +48,7 @@ namespace @Model.Migration.ProjectName
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 logger.LogInformation($"移行開始:{System.DateTime.Now.ToString()}");
                 logger.LogInformation($"移行元ファイル:{filePath}");
-                logger.LogInformation($"移行先テーブル:@(Model.Migration.Table.Name)");
+                logger.LogInformation($"移行先テーブル:@(Model.Project.Table.Name)");
 
                 await RunAsync(filePath,connectionString,provider);
                 
@@ -66,10 +66,10 @@ namespace @Model.Migration.ProjectName
 
         public static async Task RunAsync(string filePath,string connectionString,ServiceProvider provider)
         {
-            var creator = new @(Model.Migration.Table.Name)DataTableCreator(provider.GetRequiredService<ILogger<@(Model.Migration.Table.Name)DataTableCreator>>());
+            var creator = new @(Model.Project.Table.Name)DataTableCreator(provider.GetRequiredService<ILogger<@(Model.Project.Table.Name)DataTableCreator>>());
             var dataTable = creator.Create();
 
-            var mapper = new @(Model.Migration.Table.Name)DataTableMapper(filePath,provider.GetRequiredService<ILogger<@(Model.Migration.Table.Name)DataTableMapper>>());
+            var mapper = new @(Model.Project.Table.Name)DataTableMapper(filePath,provider.GetRequiredService<ILogger<@(Model.Project.Table.Name)DataTableMapper>>());
             mapper.Map(dataTable);
 
             using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
@@ -80,7 +80,7 @@ namespace @Model.Migration.ProjectName
             try
             {
                 using var bulkCopy = new SqlBulkCopy(connection,Microsoft.Data.SqlClient.SqlBulkCopyOptions.Default,transaction as Microsoft.Data.SqlClient.SqlTransaction);
-                bulkCopy.DestinationTableName = "[@(Model.Migration.Table.Name)]";
+                bulkCopy.DestinationTableName = "[@(Model.Project.Table.Name)]";
                 await bulkCopy.WriteToServerAsync(dataTable);
                 await transaction.CommitAsync();
             }
