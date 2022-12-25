@@ -10,7 +10,7 @@
         }
         else
         {
-            return $"{value}.{convertMethod}()";
+            return $"{value}.{convertMethod}";
         }
     }
 }
@@ -19,13 +19,13 @@ using Microsoft.Extensions.Logging;
 
 namespace @Model.Migration.ProjectName
 {
-    public class @(Model.Migration.SourceName)FileMapper
+    public class @(Model.Migration.SourceName)DataTableMapper
     {
         private readonly string _filePath;
 
         private readonly ILogger _logger;
 
-        public @(Model.Migration.SourceName)FileMapper(string filePath,ILogger<@(Model.Migration.SourceName)FileMapper> logger)
+        public @(Model.Migration.SourceName)DataTableMapper(string filePath,ILogger<@(Model.Migration.SourceName)DataTableMapper> logger)
         {
             _filePath = filePath;
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
@@ -52,8 +52,9 @@ namespace @Model.Migration.ProjectName
                         }
                         else
                         {
-                        @:var @name = line[@column.Source.StartPosition..@(column.Source.EndPosition + 1)];
+                        @:var @name = line[@column.Source.StartPosition..@(column.Source.EndPosition)];
                         @:row["@column.Destination.Name"] = @AppendConvertMethodIf(name,column.ConvertMethod);
+                        @:_logger.LogInformation($"{lineCount}行目 値:{row["@column.Destination.Name"]} 列名:@(column.Destination.Name)");
                         }
                     @:}
                     @:catch(System.Exception ex)
@@ -71,7 +72,6 @@ namespace @Model.Migration.ProjectName
                     @:}
                 }
 
-                _logger.LogInformation($"{lineCount}行目をマッピング");
                 lineCount++;
                 dataTable.Rows.Add(row);
             }

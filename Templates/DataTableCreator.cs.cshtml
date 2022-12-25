@@ -14,7 +14,7 @@ namespace @Model.Migration.ProjectName
         public System.Data.DataTable Create()
         {
             var dataTable = new System.Data.DataTable();
-            dataTable.TableName = "@Model.Migration.Table.Name";
+            dataTable.TableName = "[@Model.Migration.Table.Name]";
 
             @foreach(var column in Model.Migration.Table.Columns)
             {

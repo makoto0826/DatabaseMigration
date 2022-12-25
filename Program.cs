@@ -39,7 +39,7 @@ public class Program
                 SourceName = "User1",
                 Table = new TableMapping
                 {
-                    Name = "User",
+                    Name = "Users",
                     Columns = new List<ColumnMapping>
                 {
                     new ColumnMapping
@@ -51,7 +51,7 @@ public class Program
                         },
                         Destination = new DestinationColumn
                         {
-                            Name = "Id",
+                            Name = "UserId",
                             Type = DbType.String
                         },
                     },
@@ -59,15 +59,15 @@ public class Program
                     {
                         Source = new SourceColumn
                         {
-                            StartPosition = 6,
-                            EndPosition = 20,
+                            StartPosition = 5,
+                            EndPosition = 10,
                         },
                         Destination = new DestinationColumn
                         {
                             Name = "UserName",
                             Type = DbType.String
                         },
-                        ConvertMethod = "ToUpper"
+                        ConvertMethod = "Trim().ToUpper()"
                     },
                     new ColumnMapping
                     {
