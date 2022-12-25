@@ -85,7 +85,7 @@ public class Program
         };
 
         var razorEngine = new RazorEngine();
-        var fileInfoWithTaskList =
+        var nameWithTaskList =
             new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, "Templates"))
                 .GetFiles()
                 .Select(fileInfo =>
@@ -102,9 +102,9 @@ public class Program
                     return (name, task);
                 });
 
-        await Task.WhenAll(fileInfoWithTaskList.Select(x => x.task));
+        await Task.WhenAll(nameWithTaskList.Select(x => x.task));
 
-        var contents = fileInfoWithTaskList.Select(x => (x.name, x.task.Result)).ToList();
+        var contents = nameWithTaskList.Select(x => (x.name, x.task.Result)).ToList();
         var fileGenerator = FileGenerator.Create(context.Migration, provider.GetRequiredService<ILogger<FileGenerator>>());
         await fileGenerator.GenerateAsync(contents);
     }
