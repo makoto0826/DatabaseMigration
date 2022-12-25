@@ -29,6 +29,9 @@ public class Program
         {
             logger.LogError(ex, "Error");
         }
+
+        Console.WriteLine("終了するには何かキーを押してください");
+        Console.ReadKey();
     }
 
     public static async Task RunAsync(string excelFilePath, string baseDirectoryPath, ServiceProvider provider)
@@ -37,7 +40,7 @@ public class Program
         var generator = new ProjectGenerator(baseDirectoryPath, provider.GetRequiredService<ILogger<ProjectGenerator>>());
         var engine = new RazorEngineAdapter(Path.Combine(baseDirectoryPath, "Templates"), provider.GetRequiredService<ILogger<RazorEngineAdapter>>());
 
-        var projects = await importer.ImportAsync(excelFilePath);
+        var projects = importer.ImportFile(excelFilePath);
 
         foreach (var project in projects)
         {

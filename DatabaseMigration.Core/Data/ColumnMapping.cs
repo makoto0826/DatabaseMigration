@@ -8,7 +8,7 @@ public class ColumnMapping
 
     public string? ConvertMethod { get; init; }
 
-    public required SourceColumn Source { get; init; }
+    public SourceColumn? Source { get; init; }
 
     public required DestinationColumn Destination { get; init; }
 }
