@@ -60,7 +60,7 @@ public class Program
                         Source = new SourceColumn
                         {
                             StartPosition = 5,
-                            EndPosition = 10,
+                            EndPosition = 15,
                         },
                         Destination = new DestinationColumn
                         {
