@@ -1,26 +1,22 @@
 // Generated @Model.Now.ToString()
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace @Model.Migration.ProjectName
 {
-    public static class Program
+    public class Program
     {
-        public static async Task Main(string []args)
+        public static async Task<int> Main(string []args)
         {
-            if(args[0].Length != 1)
-            {
-                throw new System.ArgumentException("変換元ファイルパスが指定されていません");
-            }
-
-            var filePath = args[0];
-
-            if(!System.IO.File.Exists(filePath))
-            {
-                throw new System.ArgumentException("変換元ファイルパスが存在しません");
-            }
-
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            var services = new ServiceCollection();
+            services.AddLogging(options => options.AddConsole());
+
+            var provider = services.BuildServiceProvider();
+            var logger = provider.GetRequiredService<ILogger<Program>>();
 
             var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -28,25 +24,49 @@ namespace @Model.Migration.ProjectName
 
             var connectionString = config.GetConnectionString("Database");
 
-            if(String.IsNullOrEmpty(connectionString))
+            try 
             {
-                throw new System.InvalidOperationException("データベースの接続情報がありません");
+                if(String.IsNullOrEmpty(connectionString))
+                {
+                    throw new System.InvalidOperationException("データベースの接続情報がありません");
+                }
+
+                if(args[0].Length != 1)
+                {
+                    throw new System.ArgumentException("変換元ファイルパスが指定されていません");
+                }
+
+                var filePath = args[0];
+
+                if(!System.IO.File.Exists(filePath))
+                {
+                    throw new System.ArgumentException("変換元ファイルパスが存在しません");
+                }
+
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                logger.LogInformation($"移行開始:{System.DateTime.Now.ToString()}");
+
+                await RunAsync(filePath,connectionString,provider);
+                
+                watch.Stop();
+                logger.LogInformation($"移行終了:{System.DateTime.Now.ToString()} {watch.ElapsedMilliseconds}ミリ秒");
+            }
+            catch(Exception ex)
+            {
+                logger.LogError(ex,"Error");
+                return 99;
             }
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            System.Console.WriteLine($"移行開始:{System.DateTime.Now.ToString()}");
-            await RunAsync(filePath,connectionString);
-            watch.Stop();
-            System.Console.WriteLine($"移行終了:{System.DateTime.Now.ToString()} {watch.ElapsedMilliseconds}ミリ秒");
+            return 0;
         }
 
-        public static async Task RunAsync(string filePath,string connectionString)
+        public static async Task RunAsync(string filePath,string connectionString,ServiceProvider provider)
         {
-            var dataTableCreator = new @(Model.Migration.Table.Name)DataTableCreator();
-            var dataTable = dataTableCreator.Create();
+            var creator = new @(Model.Migration.Table.Name)DataTableCreator(provider.GetRequiredService<ILogger<@(Model.Migration.Table.Name)DataTableCreator>>());
+            var dataTable = creator.Create();
 
-            var fileMapper = new @(Model.Migration.SourceName)FileMapper(filePath);
-            fileMapper.Map(dataTable);
+            var mapper = new @(Model.Migration.SourceName)FileMapper(filePath,provider.GetRequiredService<ILogger<@(Model.Migration.SourceName)FileMapper>>());
+            mapper.Map(dataTable);
 
             using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
             await connection.OpenAsync();

@@ -15,15 +15,20 @@
     }
 }
 
+using Microsoft.Extensions.Logging;
+
 namespace @Model.Migration.ProjectName
 {
     public class @(Model.Migration.SourceName)FileMapper
     {
         private readonly string _filePath;
 
-        public @(Model.Migration.SourceName)FileMapper(string filePath)
+        private readonly ILogger _logger;
+
+        public @(Model.Migration.SourceName)FileMapper(string filePath,ILogger<@(Model.Migration.SourceName)FileMapper> logger)
         {
             _filePath = filePath;
+            _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
         }
 
         public void Map(System.Data.DataTable dataTable)
@@ -55,18 +60,18 @@ namespace @Model.Migration.ProjectName
                     @:{
                         if(column.Source == null)
                         {
-                        @:System.Console.WriteLine($"{lineCount}行目 列名:@(column.Destination.Name)");
+                        @:_logger.LogError(ex,$"{lineCount}行目 列名:@(column.Destination.Name)");
                         }
                         else
                         {
-                        @:System.Console.WriteLine($"{lineCount}行目 開始位置:@(column.Source.StartPosition) 終了位置:@(column.Source.EndPosition) 列名:@(column.Destination.Name)");
+                        @:_logger.LogError(ex,$"{lineCount}行目 開始位置:@(column.Source.StartPosition) 終了位置:@(column.Source.EndPosition) 列名:@(column.Destination.Name)");
                         }
-                        @:System.Console.WriteLine(ex.Message);
 
                         @:throw;
                     @:}
                 }
 
+                _logger.LogInformation($"{lineCount}行目をマッピング");
                 lineCount++;
                 dataTable.Rows.Add(row);
             }
