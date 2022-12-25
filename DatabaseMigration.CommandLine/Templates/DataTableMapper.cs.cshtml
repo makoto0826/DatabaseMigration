@@ -1,0 +1,80 @@
+// Generated @Model.Now.ToString()
+@using System
+
+@functions {
+    public string AppendConvertMethodIf(string value,string? convertMethod)
+    {
+        if(String.IsNullOrEmpty(convertMethod))
+        {
+            return value;
+        }
+        else
+        {
+            return $"{value}.{convertMethod}";
+        }
+    }
+}
+
+using Microsoft.Extensions.Logging;
+
+namespace @Model.Migration.ProjectName
+{
+    public class @(Model.Migration.SourceName)DataTableMapper
+    {
+        private readonly string _filePath;
+
+        private readonly ILogger _logger;
+
+        public @(Model.Migration.SourceName)DataTableMapper(string filePath,ILogger<@(Model.Migration.SourceName)DataTableMapper> logger)
+        {
+            _filePath = filePath;
+            _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+        }
+
+        public void Map(System.Data.DataTable dataTable)
+        {
+            using var reader = new System.IO.StreamReader(_filePath,System.Text.Encoding.GetEncoding("Shift-JIS"));
+            string? line = null;
+            var lineCount = 1;
+
+            while((line = reader.ReadLine()) != null)
+            {
+                var row = dataTable.NewRow();
+
+                @foreach(var column in Model.Migration.Table.Columns)
+                {
+                    var name = column.Destination.Name.ToLower();
+                    @:try
+                    @:{
+                        @if(column.IsGeneration)
+                        {
+                        @:row["@column.Destination.Name"] = @column.GenerationMethod;
+                        }
+                        else
+                        {
+                        @:var @name = line[@column.Source.StartPosition..@(column.Source.EndPosition)];
+                        @:row["@column.Destination.Name"] = @AppendConvertMethodIf(name,column.ConvertMethod);
+                        @:_logger.LogInformation($"{lineCount}行目 値:{row["@column.Destination.Name"]} 列名:@(column.Destination.Name)");
+                        }
+                    @:}
+                    @:catch(System.Exception ex)
+                    @:{
+                        if(column.Source == null)
+                        {
+                        @:_logger.LogError(ex,$"{lineCount}行目 列名:@(column.Destination.Name)");
+                        }
+                        else
+                        {
+                        @:_logger.LogError(ex,$"{lineCount}行目 開始位置:@(column.Source.StartPosition) 終了位置:@(column.Source.EndPosition) 列名:@(column.Destination.Name)");
+                        }
+
+                        @:throw;
+                    @:}
+                }
+
+                lineCount++;
+                dataTable.Rows.Add(row);
+            }
+        }
+    }
+}
