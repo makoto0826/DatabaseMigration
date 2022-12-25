@@ -22,7 +22,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageReference Include="RazorEngineCore" Version="2022.8.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="./Templates/**/*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,6 +1,6 @@
 using RazorEngineCore;
 
-namespace DatabaseMigration;
+namespace DatabaseMigration.RazorEngineCore;
 
 public static class RazorEngineExtensions
 {

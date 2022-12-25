@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration;
+namespace DatabaseMigration.IO;
 
 public class FileGenerator
 {

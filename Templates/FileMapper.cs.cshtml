@@ -2,15 +2,15 @@
 @using System
 
 @functions {
-    public string AppendConvertMethodIf(string value,string? convertMethodName)
+    public string AppendConvertMethodIf(string value,string? convertMethod)
     {
-        if(String.IsNullOrEmpty(convertMethodName))
+        if(String.IsNullOrEmpty(convertMethod))
         {
             return value;
         }
         else
         {
-            return $"{value}.{convertMethodName}()";
+            return $"{value}.{convertMethod}()";
         }
     }
 }
@@ -38,23 +38,31 @@ namespace @Model.Migration.ProjectName
 
                 @foreach(var column in Model.Migration.Table.Columns)
                 {
-                    var name = column.Name.ToLower();
+                    var name = column.Destination.Name.ToLower();
                     @:try
                     @:{
                         @if(column.IsGeneration)
                         {
-                        @:row["@column.Name"] = @column.GenerationMethodName;
+                        @:row["@column.Destination.Name"] = @column.GenerationMethod;
                         }
                         else
                         {
-                        @:var @name = line[@column.StartPosition..@(column.EndPosition + 1)];
-                        @:row["@column.Name"] = @AppendConvertMethodIf(name,column.ConvertMethodName);
+                        @:var @name = line[@column.Source.StartPosition..@(column.Source.EndPosition + 1)];
+                        @:row["@column.Destination.Name"] = @AppendConvertMethodIf(name,column.ConvertMethod);
                         }
                     @:}
                     @:catch(System.Exception ex)
                     @:{
-                        @:System.Console.WriteLine($"{lineCount}行目 開始位置:@(column.StartPosition) 終了位置:@(column.EndPosition) 列名:@(column.Name)");
+                        if(column.Source == null)
+                        {
+                        @:System.Console.WriteLine($"{lineCount}行目 列名:@(column.Destination.Name)");
+                        }
+                        else
+                        {
+                        @:System.Console.WriteLine($"{lineCount}行目 開始位置:@(column.Source.StartPosition) 終了位置:@(column.Source.EndPosition) 列名:@(column.Destination.Name)");
+                        }
                         @:System.Console.WriteLine(ex.Message);
+
                         @:throw;
                     @:}
                 }

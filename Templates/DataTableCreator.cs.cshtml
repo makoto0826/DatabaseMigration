@@ -11,7 +11,7 @@ namespace @Model.Migration.ProjectName
 
             @foreach(var column in Model.Migration.Table.Columns)
             {
-            @:dataTable.Columns.Add(new System.Data.DataColumn("@column.Name"));
+            @:dataTable.Columns.Add(new System.Data.DataColumn("@column.Destination.Name"));
             }
 
             return dataTable;

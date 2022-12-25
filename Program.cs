@@ -2,6 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RazorEngineCore;
 using DatabaseMigration.Data;
+using System.Data;
+using DatabaseMigration.RazorEngineCore;
+using DatabaseMigration.IO;
 
 namespace DatabaseMigration;
 
@@ -41,22 +44,40 @@ public class Program
                 {
                     new ColumnMapping
                     {
-                        Name = "Id",
-                        StartPosition = 0,
-                        EndPosition = 5,
+                        Source = new SourceColumn
+                        {
+                            StartPosition = 0,
+                            EndPosition = 5,
+                        },
+                        Destination = new DestinationColumn
+                        {
+                            Name = "Id",
+                            Type = DbType.String
+                        },
                     },
                     new ColumnMapping
                     {
-                        Name = "UserName",
-                        StartPosition = 6,
-                        EndPosition = 20,
-                        ConvertMethodName = "ToUpper"
+                        Source = new SourceColumn
+                        {
+                            StartPosition = 6,
+                            EndPosition = 20,
+                        },
+                        Destination = new DestinationColumn
+                        {
+                            Name = "UserName",
+                            Type = DbType.String
+                        },
+                        ConvertMethod = "ToUpper"
                     },
                     new ColumnMapping
                     {
                         IsGeneration = true,
-                        Name = "CreatedAt",
-                        GenerationMethodName = "DateTime.Now"
+                        Destination = new DestinationColumn
+                        {
+                            Name = "CreatedAt",
+                            Type = DbType.DateTime,
+                        },
+                        GenerationMethod = "DateTime.Now"
                     }
                 }
                 }
@@ -64,25 +85,27 @@ public class Program
         };
 
         var razorEngine = new RazorEngine();
-        var basePath = AppContext.BaseDirectory;
-        var builderAction = (IRazorEngineCompilationOptionsBuilder builder) => { };
+        var fileInfoWithTaskList =
+            new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, "Templates"))
+                .GetFiles()
+                .Select(fileInfo =>
+                {
+                    var sp = fileInfo.Name.Split(new char[] { '.' });
+                    var name = $"{sp[0]}.{sp[1]}";
 
-        var appSettingContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/AppSettings.cshtml");
-        var projectContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Project.{context.Migration.DatabaseType}.cshtml");
-        var programContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Program.{context.Migration.DatabaseType}.cshtml", builderAction, context);
-        var fileMapperContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/FileMapper.{context.Migration.DatabaseType}.cshtml", builderAction, context);
-        var dataTableCreatorContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/DataTableCreator.{context.Migration.DatabaseType}.cshtml", builderAction, context);
-        var extensionsContent = await razorEngine.RunFromFileAsync($"{basePath}/Templates/Extensions.cshtml", builderAction, context);
+                    if (sp[1] == "csproj")
+                    {
+                        name = $"{context.Migration.ProjectName}.{sp[1]}";
+                    }
 
+                    var task = razorEngine.RunFromFileAsync(fileInfo.FullName, model: context);
+                    return (name, task);
+                });
+
+        await Task.WhenAll(fileInfoWithTaskList.Select(x => x.task));
+
+        var contents = fileInfoWithTaskList.Select(x => (x.name, x.task.Result)).ToList();
         var fileGenerator = FileGenerator.Create(context.Migration, provider.GetRequiredService<ILogger<FileGenerator>>());
-        await fileGenerator.GenerateAsync(new List<(string, string)>
-        {
-            new ($"appsettings.json",appSettingContent),
-            new ($"{context.Migration.ProjectName}.csproj",projectContent),
-            new ("Program.cs",programContent),
-            new ("FileMapper.cs",fileMapperContent),
-            new ("DataTableCreator.cs",dataTableCreatorContent),
-            new ("Extensions.cs",extensionsContent)
-        });
+        await fileGenerator.GenerateAsync(contents);
     }
 }
