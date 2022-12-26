@@ -1,4 +1,4 @@
-using RazorEngineCore;
+﻿using RazorEngineCore;
 
 namespace DatabaseMigration.Core.Template;
 

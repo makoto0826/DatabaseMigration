@@ -1,4 +1,4 @@
-namespace DatabaseMigration.Core.Template;
+﻿namespace DatabaseMigration.Core.Template;
 
 public class TemplateResult
 {

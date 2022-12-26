@@ -1,10 +1,10 @@
+﻿using System.Data;
+using DatabaseMigration.Core.Data;
+using DatabaseMigration.Core.Generator;
+using DatabaseMigration.Core.Importer;
+using DatabaseMigration.Core.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using DatabaseMigration.Core.Data;
-using System.Data;
-using DatabaseMigration.Core.Template;
-using DatabaseMigration.Core.Generator;
-using DatabaseMigration.Core.Import;
 
 namespace DatabaseMigration.CommandLine;
 

@@ -1,8 +1,8 @@
+﻿using ClosedXML.Excel;
 using DatabaseMigration.Core.Data;
 using Microsoft.Extensions.Logging;
-using ClosedXML.Excel;
 
-namespace DatabaseMigration.Core.Import;
+namespace DatabaseMigration.Core.Importer;
 
 public class ExcelImporter
 {

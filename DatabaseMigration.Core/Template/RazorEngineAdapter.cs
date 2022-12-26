@@ -1,5 +1,5 @@
+﻿using Microsoft.Extensions.Logging;
 using RazorEngineCore;
-using Microsoft.Extensions.Logging;
 
 namespace DatabaseMigration.Core.Template;
 

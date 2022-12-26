@@ -1,4 +1,4 @@
-using DatabaseMigration.Core.Data;
+﻿using DatabaseMigration.Core.Data;
 
 namespace DatabaseMigration.Core.Template;
 

@@ -1,4 +1,4 @@
-namespace DatabaseMigration.Core.Data;
+﻿namespace DatabaseMigration.Core.Data;
 
 public class TableMapping
 {
