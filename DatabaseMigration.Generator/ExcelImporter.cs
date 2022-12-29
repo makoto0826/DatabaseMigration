@@ -2,7 +2,7 @@
 using DatabaseMigration.Core.Data;
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration.Core.Importer;
+namespace DatabaseMigration.Generator;
 
 public class ExcelImporter
 {
@@ -22,6 +22,11 @@ public class ExcelImporter
 
         var workbook = new XLWorkbook(filePath);
         var settingSheet = workbook.Worksheets.First(x => x.Name == "設定");
+
+        if (settingSheet is null)
+        {
+            throw new InvalidOperationException("設定シートが存在しません");
+        }
 
         var databaseType = settingSheet.Cell("B1").GetString() switch
         {
@@ -45,7 +50,7 @@ public class ExcelImporter
                 //H:8 Convert Method
                 //I:9 Generation Method
 
-                // row 5 - 1024
+                // search row from 5 to 1024
                 var columns =
                     x.Rows(5, 1024)
                         .Where(x => !String.IsNullOrWhiteSpace(x.Cell(4).GetString()))

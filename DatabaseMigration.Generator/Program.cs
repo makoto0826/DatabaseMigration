@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using DatabaseMigration.Core.Data;
-using DatabaseMigration.Core.Importer;
 using DatabaseMigration.Generator.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
