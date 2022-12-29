@@ -1,8 +1,8 @@
 ﻿using DatabaseMigration.Core.Data;
-using DatabaseMigration.Core.Template;
+using DatabaseMigration.Generator.Template;
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration.Core.Generator;
+namespace DatabaseMigration.Generator;
 
 public class ProjectGenerator
 {

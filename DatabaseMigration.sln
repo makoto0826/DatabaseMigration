@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseMigration.Core", "DatabaseMigration.Core\DatabaseMigration.Core.csproj", "{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseMigration.CommandLine", "DatabaseMigration.CommandLine\DatabaseMigration.CommandLine.csproj", "{C31205F4-8255-4B82-BE80-59327677CF95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseMigration.Generator", "DatabaseMigration.Generator\DatabaseMigration.Generator.csproj", "{C31205F4-8255-4B82-BE80-59327677CF95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

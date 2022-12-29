@@ -1,6 +1,6 @@
 ﻿using DatabaseMigration.Core.Data;
 
-namespace DatabaseMigration.Core.Template;
+namespace DatabaseMigration.Generator.Template;
 
 public class TemplateContext
 {

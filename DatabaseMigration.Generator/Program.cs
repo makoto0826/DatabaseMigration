@@ -1,12 +1,11 @@
 ﻿using System.Data;
 using DatabaseMigration.Core.Data;
-using DatabaseMigration.Core.Generator;
 using DatabaseMigration.Core.Importer;
-using DatabaseMigration.Core.Template;
+using DatabaseMigration.Generator.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration.CommandLine;
+namespace DatabaseMigration.Generator;
 
 public class Program
 {
@@ -38,7 +37,7 @@ public class Program
     {
         var importer = new ExcelImporter(provider.GetRequiredService<ILogger<ExcelImporter>>());
         var generator = new ProjectGenerator(baseDirectoryPath, provider.GetRequiredService<ILogger<ProjectGenerator>>());
-        var engine = new RazorEngineAdapter(Path.Combine(baseDirectoryPath, "Templates"), provider.GetRequiredService<ILogger<RazorEngineAdapter>>());
+        var engine = new RazorEngineAdapter(Path.Combine(baseDirectoryPath, "Views"), provider.GetRequiredService<ILogger<RazorEngineAdapter>>());
 
         var projects = importer.ImportFile(excelFilePath);
 

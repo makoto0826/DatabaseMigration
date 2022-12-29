@@ -3,10 +3,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <AssemblyName>DatabaseMigrationCmd</AssemblyName>
+    <AssemblyName>DatabaseMigrationGen</AssemblyName>
     <VersionPrefix>0.0.1</VersionPrefix>
-    <Title>DatabaseMigration.CommandLine</Title>
-    <Description>DatabaseMigration.CommandLine</Description>
+    <Title>DatabaseMigration.Generator</Title>
+    <Description>DatabaseMigration.Generator</Description>
     <LangVersion>11</LangVersion>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
@@ -22,10 +22,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="RazorEngineCore" Version="2022.8.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="./Templates/**/*.*">
+    <Content Include="./Views/**/*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

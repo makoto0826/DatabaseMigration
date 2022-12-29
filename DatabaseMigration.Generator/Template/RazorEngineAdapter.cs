@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using RazorEngineCore;
 
-namespace DatabaseMigration.Core.Template;
+namespace DatabaseMigration.Generator.Template;
 
 public class RazorEngineAdapter
 {
@@ -27,7 +27,7 @@ public class RazorEngineAdapter
     public async Task<TemplateResult> RunAsync(TemplateContext context)
     {
         var nameWithTaskList =
-            new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, "Templates"))
+            new DirectoryInfo(_templateDirectoryPath)
                .GetFiles()
                .Select(fileInfo =>
                {
