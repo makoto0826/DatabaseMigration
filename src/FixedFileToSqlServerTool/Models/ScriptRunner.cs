@@ -14,8 +14,8 @@ public static class ScriptRunner
                 var script = CSharpScript.Create<object>(code, globalsType: typeof(ScriptVariables));
                 script.Compile();
 
-                var scriptState = await script.RunAsync(variables);
-                return new ScriptRunResult(true, scriptState.ReturnValue, null);
+                var state = await script.RunAsync(variables);
+                return new ScriptRunResult(true, state.ReturnValue, null);
             }
             catch (CompilationErrorException ex)
             {

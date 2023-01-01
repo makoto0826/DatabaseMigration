@@ -4,11 +4,11 @@ public class MappingColumn
 {
     public bool IsGeneration { get; set; }
 
-    public FixedColumn? FixedColumn { get; set; }
+    public FixedColumn? Source { get; set; }
 
-    public TableColumn TableColumn { get; set; }
+    public ColumnDefinition Destination { get; set; }
 
-    public string? GenerationMethodId { get; set; }
+    public string? GenerationScriptCode { get; set; }
 
-    public string? ConvertMethodId { get; set; }
+    public string? ConvertScriptCode { get; set; }
 }

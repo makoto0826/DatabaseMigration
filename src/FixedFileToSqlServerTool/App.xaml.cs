@@ -30,6 +30,7 @@ public partial class App : Application
                             viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton(x => new LiteDatabase(connectionString))
                 .AddSingleton(x => new ScriptRepository(x.GetRequiredService<LiteDatabase>()))
+                .AddSingleton(x => new DatabaseSettingRepository(x.GetRequiredService<LiteDatabase>()))
                 .AddTransient<DatabaseSettingDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider()
