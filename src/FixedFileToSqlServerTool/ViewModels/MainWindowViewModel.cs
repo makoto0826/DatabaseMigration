@@ -42,21 +42,36 @@ public partial class MainWindowViewModel : ObservableObject
         _dialogService = dialogService;
 
         WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
-        WeakReferenceMessenger.Default.Register<SavingScriptMessage>(this, this.HandleSaveScript);
+        WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
     }
 
-    private void HandleClosePane(object _, ClosedPaneMessage message) => this.DocumentPanes.Remove(message.Value);
+    private void HandleClosePane(object _, ClosedPaneMessage message)
+    {
+        this.DocumentPanes.Remove(message.Value);
+    }
 
-    private void HandleSaveScript(object _, SavingScriptMessage message) => _scriptRepository.Save(message.Value);
+    private void HandleSavedScript(object _, SavedScriptMessage message)
+    {
+        var storedScirpt = this.Scripts.FirstOrDefault(x => x.Id == message.Value.Id);
+
+        if(storedScirpt is null)
+        {
+            this.Scripts.Add(message.Value);
+        }
+        else
+        {
+            storedScirpt.Name = message.Value.Name;
+        }
+    }
 
     [RelayCommand]
     private void Loaded()
     {
-        var scripts = _scriptRepository.FindAll();
-        this.Scripts.AddRange(scripts);
-
         var tables = _tableDefinitionRepository.FindAll();
         this.Tables.AddRange(tables);
+
+        var scripts = _scriptRepository.FindAll();
+        this.Scripts.AddRange(scripts);
     }
 
     [RelayCommand]
@@ -108,12 +123,8 @@ public partial class MainWindowViewModel : ObservableObject
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        this.Scripts.Add(script);
-
-        var vm = new ScriptPaneViewModel(script);
+        var vm = new ScriptPaneViewModel(script,_scriptRepository);
         this.DocumentPanes.Add(vm);
-
-        _scriptRepository.Save(script);
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
@@ -167,7 +178,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new ScriptPaneViewModel(script)
+            this.DocumentPanes.Add(new ScriptPaneViewModel(script,_scriptRepository)
             {
                 IsActive = true
             });
