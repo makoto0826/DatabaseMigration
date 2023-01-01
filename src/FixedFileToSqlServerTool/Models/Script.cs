@@ -2,29 +2,31 @@ using LiteDB;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public class Script
+public record Script
 {
-    public ObjectId Id { get; set; }
+    private const string DefaultCode = @"using System;
+// テストデータは、Value変数から取得します。Valueの型はString
+//
+// 取得結果はreturn句を使用
 
-    public string Name { get; set; }
+return Value;";
 
-    public string Code { get; set; }
+    public ObjectId Id { get; init; }
 
-    public DateTime UpdatedAt { get; set; }
+    public string Name { get; init; }
 
-    public DateTime CreatedAt { get; set; }
+    public string Code { get; init; }
+
+    public DateTime UpdatedAt { get; init; }
+
+    public DateTime CreatedAt { get; init; }
 
     public static Script Create(string name) =>
         new Script
         {
             Id = ObjectId.NewObjectId(),
             Name = name,
-            Code = @"using System;
-// テストデータは、Value変数から取得します。Valueの型はString
-//
-// 取得結果はreturn句を使用
-
-return Value;",
+            Code = DefaultCode,
             UpdatedAt = DateTime.Now,
             CreatedAt = DateTime.Now
         };

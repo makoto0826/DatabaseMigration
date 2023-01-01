@@ -32,18 +32,18 @@ public partial class ScriptPaneViewModel : ObservableObject, IPaneViewModel
 
     public ObjectId Id { get; }
 
-    private readonly Models.Script _script;
+    private readonly ScriptWidgetViewModel _scriptWidget;
 
     private readonly ScriptRepository _scriptRepository;
 
-    public ScriptPaneViewModel(Models.Script script,ScriptRepository scriptRepository)
+    public ScriptPaneViewModel(ScriptWidgetViewModel scriptWidget,ScriptRepository scriptRepository)
     {
-        _script = script;
+        _scriptWidget = scriptWidget;
         _scriptRepository = scriptRepository;
 
-        this.Name = _script.Name;
-        this.Id = _script.Id;
-        this.codeDocument = new TextDocument(_script.Code);
+        this.Name = _scriptWidget.Script.Name;
+        this.Id = _scriptWidget.Script.Id;
+        this.codeDocument = new TextDocument(_scriptWidget.Script.Code);
         this.logDocument = new TextDocument();
     }
 
@@ -53,12 +53,15 @@ public partial class ScriptPaneViewModel : ObservableObject, IPaneViewModel
     [RelayCommand]
     private void Save()
     {
-        _script.Name = this.Name;
-        _script.Code = this.CodeDocument.Text;
-        _script.UpdatedAt = DateTime.Now;
-        _scriptRepository.Save(_script);
+        var newScript = _scriptWidget.Script with {
+            Name = this.Name,
+            Code = this.CodeDocument.Text,
+            UpdatedAt = DateTime.Now
+        };
 
-        WeakReferenceMessenger.Default.Send(new SavedScriptMessage(_script));
+        _scriptRepository.Save(newScript);
+
+        WeakReferenceMessenger.Default.Send(new SavedScriptMessage(newScript));
     }
 
     [RelayCommand]

@@ -114,7 +114,7 @@
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top" Background="WhiteSmoke">
                                     <ToolBar ToolBarTray.IsLocked="True">
-                                        <Button Padding="4,2" ToolTip="追加" Command="{Binding ShowDatabaseSettingDialogCommand}">
+                                        <Button Padding="4,2" ToolTip="設定" Command="{Binding ShowDatabaseSettingDialogCommand}">
                                             <StackPanel Orientation="Horizontal">
                                                 <iconPacks:PackIconModern Kind="ListGear" Width="14" />
                                             </StackPanel>
@@ -130,7 +130,7 @@
                                 <TreeView x:Name="TableTreeView" ItemsSource="{Binding Tables}">
                                     <TreeView.Resources>
                                         <ContextMenu x:Key="TableContextMenu">
-                                            <MenuItem Header="開く"
+                                            <MenuItem Header="開く(_O)"
                                                 Command="{Binding
                                                     Path=PlacementTarget.Tag.OpenTableCommand,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
@@ -173,14 +173,14 @@
                                 <TreeView x:Name="ScriptTreeView" ItemsSource="{Binding Scripts}">
                                     <TreeView.Resources>
                                         <ContextMenu x:Key="ScriptContextMenu">
-                                            <MenuItem Header="開く"
+                                            <MenuItem Header="開く(_O)"
                                                 Command="{Binding
                                                     Path=PlacementTarget.Tag.OpenScriptCommand,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                 CommandParameter="{Binding
                                                     Path=PlacementTarget.DataContext,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
-                                            <MenuItem Header="削除" />
+                                            <MenuItem Header="削除(_D)" />
                                         </ContextMenu>
                                     </TreeView.Resources>
                                     <TreeView.ItemContainerStyle>
@@ -191,7 +191,7 @@
                                     </TreeView.ItemContainerStyle>
                                     <TreeView.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Text="{Binding Script.Name}" />
                                         </DataTemplate>
                                     </TreeView.ItemTemplate>
 

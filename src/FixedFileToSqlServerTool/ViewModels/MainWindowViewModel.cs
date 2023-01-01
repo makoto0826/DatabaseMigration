@@ -16,7 +16,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<TableDefinition> Tables { get; } = new();
 
-    public ObservableCollection<Script> Scripts { get; } = new();
+    public ObservableCollection<ScriptWidgetViewModel> Scripts { get; } = new();
 
     private int mappingCount = 1;
 
@@ -52,11 +52,15 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void HandleSavedScript(object _, SavedScriptMessage message)
     {
-        var storedScirpt = this.Scripts.FirstOrDefault(x => x.Id == message.Value.Id);
+        var storedScirptWidget = this.Scripts.FirstOrDefault(x => x.Script.Id == message.Value.Id);
 
-        if(storedScirpt is null)
+        if(storedScirptWidget is null)
         {
-            this.Scripts.Add(message.Value);
+            this.Scripts.Add(new (message.Value));
+        }
+        else 
+        {
+            storedScirptWidget.Script = message.Value;
         }
     }
 
@@ -67,7 +71,7 @@ public partial class MainWindowViewModel : ObservableObject
         this.Tables.AddRange(tables);
 
         var scripts = _scriptRepository.FindAll();
-        this.Scripts.AddRange(scripts);
+        this.Scripts.AddRange(scripts.Select(x => new ScriptWidgetViewModel(x)));
     }
 
     [RelayCommand]
@@ -119,7 +123,7 @@ public partial class MainWindowViewModel : ObservableObject
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptPaneViewModel(script,_scriptRepository);
+        var vm = new ScriptPaneViewModel(new (script),_scriptRepository);
         this.DocumentPanes.Add(vm);
     }
 
@@ -129,8 +133,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     }
 
-    [RelayCommand(CanExecute = nameof(CheckScript))]
-    private void DeleteScript(Script script)
+    [RelayCommand(CanExecute = nameof(CheckScriptWidget))]
+    private void DeleteScript(ScriptWidgetViewModel scriptWidget)
     {
 
     }
@@ -160,8 +164,8 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CheckScript))]
-    private void OpenScript(Script script)
+    [RelayCommand(CanExecute = nameof(CheckScriptWidget))]
+    private void OpenScript(ScriptWidgetViewModel scriptWidget)
     {
         var vmList = this.DocumentPanes.OfType<ScriptPaneViewModel>().ToList();
 
@@ -170,11 +174,11 @@ public partial class MainWindowViewModel : ObservableObject
             vm.IsActive = false;
         }
 
-        var hitVm = vmList.FirstOrDefault(x => x.Id == script.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new ScriptPaneViewModel(script,_scriptRepository)
+            this.DocumentPanes.Add(new ScriptPaneViewModel(scriptWidget,_scriptRepository)
             {
                 IsActive = true
             });
@@ -187,5 +191,5 @@ public partial class MainWindowViewModel : ObservableObject
 
     private bool CheckMappingTable(MappingTableDefinition? table) => table is not null;
 
-    private bool CheckScript(Script? script) => script is not null;
+    private bool CheckScriptWidget(ScriptWidgetViewModel? scriptWidget) => scriptWidget is not null;
 }
