@@ -44,10 +44,10 @@ public partial class MainWindowViewModel
 
         WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
         WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
-        WeakReferenceMessenger.Default.Register<ChangedIsAcitvePaneMessage>(this, this.HandleIsActiveChanged);
+        WeakReferenceMessenger.Default.Register<ChangedIsSelectedPaneMessage>(this, this.HandleIsSelectedChanged);
     }
 
-    private void HandleIsActiveChanged(object _, ChangedIsAcitvePaneMessage mesage)
+    private void HandleIsSelectedChanged(object _, ChangedIsSelectedPaneMessage mesage)
     {
         if (mesage.Value is ScriptPaneViewModel scriptVm)
         {
@@ -56,7 +56,7 @@ public partial class MainWindowViewModel
                 scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.Id;
             }
         }
-        else if (mesage.Value is MappingTableWidgetViewModel mappingTableVm)
+        else if (mesage.Value is MappingTablePaneViewModel mappingTableVm)
         {
             foreach (var mappingTableWidget in this.MappingTables)
             {

@@ -7,6 +7,9 @@ namespace FixedFileToSqlServerTool.ViewModels;
 public partial class MappingTableWidgetViewModel
 {
     [ObservableProperty]
+    private bool isSelected;
+
+    [ObservableProperty]
     private MappingTableDefinition table;
 
     public MappingTableWidgetViewModel(MappingTableDefinition table)

@@ -46,10 +46,7 @@ public partial class ScriptPaneViewModel : IPaneViewModel
         this.logDocument = new TextDocument();
     }
 
-    partial void OnIsSelectedChanged(bool _)
-    {
-        WeakReferenceMessenger.Default.Send(new ChangedIsAcitvePaneMessage(this));
-    }
+    partial void OnIsSelectedChanged(bool _) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));

@@ -29,6 +29,8 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
         this.Id = mappingTableWidget.Table.Id;
     }
 
+    partial void OnIsSelectedChanged(bool _) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
+
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
 }
