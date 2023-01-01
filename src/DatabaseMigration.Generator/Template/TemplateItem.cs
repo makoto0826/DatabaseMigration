@@ -1,3 +1,3 @@
-﻿namespace DatabaseMigration.Generator.Template;
+namespace DatabaseMigration.Generator.Template;
 
 public record TemplateItem(string Name, string Content);

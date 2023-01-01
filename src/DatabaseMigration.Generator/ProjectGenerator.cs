@@ -1,4 +1,4 @@
-﻿using DatabaseMigration.Data;
+using DatabaseMigration.Data;
 using DatabaseMigration.Generator.Template;
 using Microsoft.Extensions.Logging;
 

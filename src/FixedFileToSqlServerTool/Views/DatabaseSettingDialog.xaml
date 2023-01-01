@@ -4,14 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:FixedFileToSqlServerTool.ViewModels"
+        xmlns:view="clr-namespace:FixedFileToSqlServerTool.Views"
+        xmlns:vm="clr-namespace:FixedFileToSqlServerTool.ViewModels"
         mc:Ignorable="d"
         Title="DB設定"
-        Height="250"
+        Height="270"
         Width="500"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        d:DataContext="{d:DesignInstance {x:Type local:DatabaseSettingDialogViewModel}}">
+        view:WindowBehavior.HideCloseButton="True"
+        d:DataContext="{d:DesignInstance {x:Type vm:DatabaseSettingDialogViewModel}}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.Resources>
+        <view:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"  />
@@ -22,41 +32,41 @@
             <StackPanel Orientation="Vertical" Margin="8">
                 <StackPanel Orientation="Horizontal">
                     <Label Width="70" Content="サーバー" Margin="0,0,10,0" />
-                    <TextBox Width="270" />
+                    <TextBox Width="270" Text="{Binding Server,UpdateSourceTrigger=PropertyChanged}" />
                     <Label Content="ポート" Margin="0,0,10,0" />
-                    <TextBox Width="50" />
+                    <TextBox Width="50" Text="{Binding Port,UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
                     <Label Width="70" Content="データベース" Margin="0,0,10,0" />
-                    <TextBox Width="270" />
+                    <TextBox Width="270" Text="{Binding Database,UpdateSourceTrigger=PropertyChanged}"  />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
                     <Label Width="70" Content="ユーザーID" Margin="0,0,10,0" />
-                    <TextBox Width="270" />
+                    <TextBox Width="270" Text="{Binding UserId,UpdateSourceTrigger=PropertyChanged}"  />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
                     <Label Width="70" Content="パスワード" Margin="0,0,10,0" />
-                    <PasswordBox Width="270" />
+                    <PasswordBox Width="270" view:PasswordBoxHelper.Password="{Binding Password,UpdateSourceTrigger=PropertyChanged}"  />
                 </StackPanel>
             </StackPanel>
         </DockPanel>
         <Border Grid.Row="1" Background="WhiteSmoke">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8">
-                <Button x:Name="TestButton" Content="接続テスト" Width="80" Margin="0,0,16,0">
+                <Button x:Name="TestButton" Content="接続テスト" Width="80" Margin="0,0,32,0" IsEnabled="{Binding IsRunning,Converter={StaticResource InverseBooleanConverter}}" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <i:InvokeCommandAction Command="{Binding Path=TestCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <Button x:Name="OkButton" Content="OK" Width="80" Margin="0,0,16,0">
+                <Button x:Name="OkButton" Content="OK" Width="80" Margin="0,0,16,0" IsEnabled="{Binding IsRunning,Converter={StaticResource InverseBooleanConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <i:InvokeCommandAction Command="{Binding Path=OkCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <Button Name="CancelButton" Content="キャンセル" Width="80">
+                <Button Name="CancelButton" Content="キャンセル" Width="80" IsEnabled="{Binding IsRunning,Converter={StaticResource InverseBooleanConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <i:InvokeCommandAction Command="{Binding Path=CancelCommand}" />

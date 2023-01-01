@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using DatabaseMigration.Data;
 using Microsoft.Extensions.Logging;
 

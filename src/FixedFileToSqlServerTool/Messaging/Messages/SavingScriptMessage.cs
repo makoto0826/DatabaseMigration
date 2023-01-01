@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace FixedFileToSqlServerTool.ViewModels.Messages;
+namespace FixedFileToSqlServerTool.Messaging.Messages;
 
 public class SavingScriptMessage : ValueChangedMessage<Models.Script>
 {

@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
-using FixedFileToSqlServerTool.ViewModels.Messages;
 using HanumanInstitute.MvvmDialogs;
 
 namespace FixedFileToSqlServerTool.ViewModels;
@@ -12,23 +12,32 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<IPaneViewModel> DocumentPanes { get; } = new();
 
-    public ObservableCollection<MappingTableDefinition> Tables { get; } = new();
+    public ObservableCollection<MappingTableDefinition> MappingTables { get; } = new();
+
+    public ObservableCollection<TableDefinition> Tables { get; } = new();
 
     public ObservableCollection<Script> Scripts { get; } = new();
-
-    [ObservableProperty]
-    private bool isLoading;
 
     private int mappingCount = 1;
 
     private int scriptCount = 1;
 
+    private readonly DatabaseSettingRepository _databaseSettingRepository;
+
+    private readonly TableDefinitionRepository _tableDefinitionRepository;
+
     private readonly ScriptRepository _scriptRepository;
 
     private readonly IDialogService _dialogService;
 
-    public MainWindowViewModel(ScriptRepository scriptRepository, IDialogService dialogService)
+    public MainWindowViewModel(
+        DatabaseSettingRepository databaseSettingRepository,
+        TableDefinitionRepository tableDefinitionRepository,
+        ScriptRepository scriptRepository,
+        IDialogService dialogService)
     {
+        _databaseSettingRepository = databaseSettingRepository;
+        _tableDefinitionRepository = tableDefinitionRepository;
         _scriptRepository = scriptRepository;
         _dialogService = dialogService;
 
@@ -43,15 +52,11 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void Loaded()
     {
-        this.IsLoading = true;
         var scripts = _scriptRepository.FindAll();
+        this.Scripts.AddRange(scripts);
 
-        foreach (var script in scripts)
-        {
-            this.Scripts.Add(script);
-        }
-
-        this.IsLoading = false;
+        var tables = _tableDefinitionRepository.FindAll();
+        this.Tables.AddRange(tables);
     }
 
     [RelayCommand]
@@ -62,10 +67,38 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task RefreshTable()
+    {
+        var setting = _databaseSettingRepository.Get();
+
+        if (setting is null)
+        {
+            return;
+        }
+
+        using var connection = setting.CreateConnection();
+
+        try
+        {
+            await connection.OpenAsync();
+            var repository = new SqlServerMetadataRepository(connection);
+            var tables = await repository.GetTableDefinitionsAsync();
+
+            _tableDefinitionRepository.Save(tables);
+            this.Tables.Clear();
+            this.Tables.AddRange(tables);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    [RelayCommand]
     private void AddMappingTable()
     {
         var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
-        this.Tables.Add(table);
+        this.MappingTables.Add(table);
 
         var vm = new MappingTablePaneViewModel(table);
         this.DocumentPanes.Add(vm);

@@ -1,4 +1,4 @@
-﻿namespace DatabaseMigration.Data;
+namespace DatabaseMigration.Data;
 
 public class ColumnMapping
 {

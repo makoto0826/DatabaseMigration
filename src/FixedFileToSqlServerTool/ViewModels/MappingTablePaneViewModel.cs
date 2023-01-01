@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
-using FixedFileToSqlServerTool.ViewModels.Messages;
 using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;

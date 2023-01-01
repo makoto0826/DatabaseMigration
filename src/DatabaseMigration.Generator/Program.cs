@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using DatabaseMigration.Data;
 using DatabaseMigration.Generator.Template;
 using Microsoft.Extensions.DependencyInjection;
