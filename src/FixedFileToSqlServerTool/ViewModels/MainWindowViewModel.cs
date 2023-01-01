@@ -58,10 +58,6 @@ public partial class MainWindowViewModel : ObservableObject
         {
             this.Scripts.Add(message.Value);
         }
-        else
-        {
-            storedScirpt.Name = message.Value.Name;
-        }
     }
 
     [RelayCommand]

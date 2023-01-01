@@ -9,9 +9,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
 {
     public event EventHandler? RequestClose;
 
-    public bool? DialogResult => _dialogResult;
-
-    private bool? _dialogResult;
+    public bool? DialogResult { get; private set; }
 
     [ObservableProperty]
     private string server;
@@ -57,7 +55,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
     }
 
     [RelayCommand]
-    private async Task Test()
+    private async Task TestConnection()
     {
         try
         {
@@ -80,7 +78,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void Ok()
     {
-        _dialogResult = true;
+        this.DialogResult = true;
         _databaseSettingRepository.Save(this.CreateDatabaseSetting());
         this.RequestClose?.Invoke(this, EventArgs.Empty);
     }
@@ -88,7 +86,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void Cancel()
     {
-        _dialogResult = false;
+        this.DialogResult = false;
         this.RequestClose?.Invoke(this, EventArgs.Empty);
     }
 

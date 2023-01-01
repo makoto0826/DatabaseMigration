@@ -55,7 +55,7 @@
                 <Button x:Name="TestButton" Content="接続テスト" Width="80" Margin="0,0,32,0" IsEnabled="{Binding IsRunning,Converter={StaticResource InverseBooleanConverter}}" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding Path=TestCommand}" />
+                            <i:InvokeCommandAction Command="{Binding Path=TestConnectionCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
