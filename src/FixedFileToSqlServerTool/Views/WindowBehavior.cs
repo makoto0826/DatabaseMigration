@@ -16,16 +16,12 @@ public class WindowBehavior
             new FrameworkPropertyMetadata(false, new PropertyChangedCallback(HideCloseButtonChangedCallback)));
 
     [AttachedPropertyBrowsableForType(typeof(Window))]
-    public static bool GetHideCloseButton(Window obj)
-    {
-        return (bool)obj.GetValue(HideCloseButtonProperty);
-    }
+    public static bool GetHideCloseButton(Window obj) =>
+        (bool)obj.GetValue(HideCloseButtonProperty);
 
     [AttachedPropertyBrowsableForType(typeof(Window))]
-    public static void SetHideCloseButton(Window obj, bool value)
-    {
+    public static void SetHideCloseButton(Window obj, bool value) =>
         obj.SetValue(HideCloseButtonProperty, value);
-    }
 
     private static void HideCloseButtonChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -68,6 +64,7 @@ public class WindowBehavior
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
@@ -110,14 +107,9 @@ public class WindowBehavior
         IsHiddenCloseButtonKey.DependencyProperty;
 
     [AttachedPropertyBrowsableForType(typeof(Window))]
-    public static bool GetIsHiddenCloseButton(Window obj)
-    {
-        return (bool)obj.GetValue(IsHiddenCloseButtonProperty);
-    }
+    public static bool GetIsHiddenCloseButton(Window obj) =>
+        (bool)obj.GetValue(IsHiddenCloseButtonProperty);
 
-    private static void SetIsHiddenCloseButton(Window obj, bool value)
-    {
+    private static void SetIsHiddenCloseButton(Window obj, bool value) =>
         obj.SetValue(IsHiddenCloseButtonKey, value);
-    }
-
 }

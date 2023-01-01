@@ -17,25 +17,17 @@ public class PasswordBoxHelper : DependencyObject
         typeof(PasswordBoxHelper),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, PasswordBoxHelper.PasswordProperty_Changed));
 
-    public static bool GetIsAttached(DependencyObject dp)
-    {
-        return (bool)dp.GetValue(PasswordBoxHelper.IsAttachedProperty);
-    }
+    public static bool GetIsAttached(DependencyObject dp) =>
+        (bool)dp.GetValue(PasswordBoxHelper.IsAttachedProperty);
 
-    public static string GetPassword(DependencyObject dp)
-    {
-        return (string)dp.GetValue(PasswordBoxHelper.PasswordProperty);
-    }
+    public static string GetPassword(DependencyObject dp) =>
+        (string)dp.GetValue(PasswordBoxHelper.PasswordProperty);
 
-    public static void SetIsAttached(DependencyObject dp, bool value)
-    {
+    public static void SetIsAttached(DependencyObject dp, bool value) =>
         dp.SetValue(PasswordBoxHelper.IsAttachedProperty, value);
-    }
 
-    public static void SetPassword(DependencyObject dp, string value)
-    {
+    public static void SetPassword(DependencyObject dp, string value) =>
         dp.SetValue(PasswordBoxHelper.PasswordProperty, value);
-    }
 
     private static void IsAttachedProperty_Changed(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {

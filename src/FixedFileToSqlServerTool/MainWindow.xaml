@@ -5,7 +5,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:local="clr-namespace:FixedFileToSqlServerTool.Views"
+        xmlns:view="clr-namespace:FixedFileToSqlServerTool.Views"
         xmlns:ad="https://github.com/Dirkster99/AvalonDock"
         mc:Ignorable="d"
         Title="DatabaseMigrationTool" Height="768" Width="1024">
@@ -27,37 +27,37 @@
             DocumentsSource="{Binding DocumentPanes}">
 
             <ad:DockingManager.LayoutItemTemplateSelector>
-                <local:LayoutItemTemplateSelector>
-                    <local:LayoutItemTemplateSelector.MappingTableTemplate>
+                <view:LayoutItemTemplateSelector>
+                    <view:LayoutItemTemplateSelector.MappingTableTemplate>
                         <DataTemplate>
-                            <local:MappingTableDocumentPaneControl  />
+                            <view:MappingTableDocumentPaneControl  />
                         </DataTemplate>
-                    </local:LayoutItemTemplateSelector.MappingTableTemplate>
-                    <local:LayoutItemTemplateSelector.ScriptTemplate>
+                    </view:LayoutItemTemplateSelector.MappingTableTemplate>
+                    <view:LayoutItemTemplateSelector.ScriptTemplate>
                         <DataTemplate>
-                            <local:ScriptDocumentPaneControl  />
+                            <view:ScriptDocumentPaneControl  />
                         </DataTemplate>
-                    </local:LayoutItemTemplateSelector.ScriptTemplate>
-                </local:LayoutItemTemplateSelector>
+                    </view:LayoutItemTemplateSelector.ScriptTemplate>
+                </view:LayoutItemTemplateSelector>
             </ad:DockingManager.LayoutItemTemplateSelector>
 
             <ad:DockingManager.LayoutItemContainerStyleSelector>
-                <local:LayoutItemContainerStyleSelector>
-                    <local:LayoutItemContainerStyleSelector.MappingTableStyle>
+                <view:LayoutItemContainerStyleSelector>
+                    <view:LayoutItemContainerStyleSelector.MappingTableStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
                             <Setter Property="Title" Value="{Binding Model.Name}" />
                             <Setter Property="IsActive" Value="{Binding Model.IsActive,Mode=TwoWay}" />
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>
-                    </local:LayoutItemContainerStyleSelector.MappingTableStyle>
-                    <local:LayoutItemContainerStyleSelector.ScriptStyle>
+                    </view:LayoutItemContainerStyleSelector.MappingTableStyle>
+                    <view:LayoutItemContainerStyleSelector.ScriptStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
                             <Setter Property="Title" Value="{Binding Model.Name}" />
                             <Setter Property="IsActive" Value="{Binding Model.IsActive,Mode=TwoWay}" />
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>
-                    </local:LayoutItemContainerStyleSelector.ScriptStyle>
-                </local:LayoutItemContainerStyleSelector>
+                    </view:LayoutItemContainerStyleSelector.ScriptStyle>
+                </view:LayoutItemContainerStyleSelector>
             </ad:DockingManager.LayoutItemContainerStyleSelector>
 
             <ad:LayoutRoot>
