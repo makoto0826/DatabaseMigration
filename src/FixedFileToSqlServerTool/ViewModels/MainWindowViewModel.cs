@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FixedFileToSqlServerTool.Infrastructures;
 using FixedFileToSqlServerTool.Models;
 using FixedFileToSqlServerTool.ViewModels.Messages;
 using HanumanInstitute.MvvmDialogs;
@@ -13,7 +12,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<IPaneViewModel> DocumentPanes { get; } = new();
 
-    public ObservableCollection<MappingTable> Tables { get; } = new();
+    public ObservableCollection<MappingTableDefinition> Tables { get; } = new();
 
     public ObservableCollection<Script> Scripts { get; } = new();
 
@@ -65,9 +64,11 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void AddMappingTable()
     {
-        var vm = new MappingTablePaneViewModel(MappingTable.Create($"新規マッピングテーブル{mappingCount++}"));
+        var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
+        this.Tables.Add(table);
+
+        var vm = new MappingTablePaneViewModel(table);
         this.DocumentPanes.Add(vm);
-        this.Tables.Add(vm.Table);
     }
 
     [RelayCommand]
@@ -83,7 +84,7 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    public void DeleteMappingTable(MappingTable table)
+    public void DeleteMappingTable(MappingTableDefinition table)
     {
 
     }
@@ -95,7 +96,7 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    private void OpenMappingTable(MappingTable table)
+    private void OpenMappingTable(MappingTableDefinition table)
     {
         var vmList = this.DocumentPanes.OfType<MappingTablePaneViewModel>().ToList();
 
@@ -104,7 +105,7 @@ public partial class MainWindowViewModel : ObservableObject
             vm.IsActive = false;
         }
 
-        var hitVm = vmList.FirstOrDefault(x => x.Table.Id == table.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.Id == table.Id);
 
         if (hitVm is null)
         {
@@ -144,7 +145,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private bool CheckMappingTable(MappingTable? table) => table is not null;
+    private bool CheckMappingTable(MappingTableDefinition? table) => table is not null;
 
     private bool CheckScript(Script? script) => script is not null;
 }

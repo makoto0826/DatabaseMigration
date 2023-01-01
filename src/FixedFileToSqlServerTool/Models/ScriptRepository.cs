@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FixedFileToSqlServerTool.Models;
 using LiteDB;
 
-namespace FixedFileToSqlServerTool.Infrastructures;
+namespace FixedFileToSqlServerTool.Models;
 
 public class ScriptRepository
 {
+    private const string CollectionName = "scripts";
+
     private readonly LiteDatabase _database;
 
     public ScriptRepository(LiteDatabase database)
@@ -18,11 +19,11 @@ public class ScriptRepository
     }
 
     public List<Script> FindAll() =>
-        _database.GetCollection<Script>().FindAll().ToList();
+        _database.GetCollection<Script>(CollectionName).FindAll().ToList();
 
     public void Save(Script script) =>
-        _database.GetCollection<Script>().Upsert(script);
+        _database.GetCollection<Script>(CollectionName).Upsert(script);
 
     public void Delete(Script script) =>
-        _database.GetCollection<Script>().Delete(script.Id);
+        _database.GetCollection<Script>(CollectionName).Delete(script.Id);
 }

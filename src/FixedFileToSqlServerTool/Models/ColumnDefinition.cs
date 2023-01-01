@@ -1,5 +1,3 @@
-using System.Data;
-
 namespace FixedFileToSqlServerTool.Models;
 
 public class ColumnDefinition

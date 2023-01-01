@@ -2,7 +2,7 @@ using Dapper;
 using FixedFileToSqlServerTool.Models;
 using Microsoft.Data.SqlClient;
 
-namespace FixedFileToSqlServerTool.Infrastructures;
+namespace FixedFileToSqlServerTool.Models;
 
 public class SqlServerMetadataRepository
 {

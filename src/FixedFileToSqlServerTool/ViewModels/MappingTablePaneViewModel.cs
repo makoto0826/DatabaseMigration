@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Models;
 using FixedFileToSqlServerTool.ViewModels.Messages;
+using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -19,12 +20,15 @@ public partial class MappingTablePaneViewModel : ObservableObject, IPaneViewMode
 
     public string ContentId => nameof(MappingTablePaneViewModel);
 
-    public MappingTable Table { get; }
+    public ObjectId Id { get; }
 
-    public MappingTablePaneViewModel(MappingTable table)
+    private readonly MappingTableDefinition _table;
+
+    public MappingTablePaneViewModel(MappingTableDefinition table)
     {
-        this.Table = table;
-        this.Name = this.Table.Name;
+        _table = table;
+        this.Name = _table.Name;
+        this.Id = _table.Id;
     }
 
     [RelayCommand]

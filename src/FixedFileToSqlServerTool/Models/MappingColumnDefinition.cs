@@ -1,6 +1,8 @@
+using LiteDB;
+
 namespace FixedFileToSqlServerTool.Models;
 
-public class MappingColumn
+public class MappingColumnDefinition
 {
     public bool IsGeneration { get; set; }
 
@@ -8,7 +10,7 @@ public class MappingColumn
 
     public ColumnDefinition Destination { get; set; }
 
-    public string? GenerationScriptCode { get; set; }
+    public Script? GenerationScript { get; set; }
 
-    public string? ConvertScriptCode { get; set; }
+    public Script? ConvertScript { get; set; }
 }

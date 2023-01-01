@@ -1,6 +1,6 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FixedFileToSqlServerTool.Infrastructures;
+using FixedFileToSqlServerTool.Models;
 using FixedFileToSqlServerTool.ViewModels;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Wpf;
