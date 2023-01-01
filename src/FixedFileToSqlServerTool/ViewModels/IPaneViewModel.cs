@@ -1,10 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace FixedFileToSqlServerTool.ViewModels;
 
 public interface IPaneViewModel
 {
-    public string Name { get; }
+    string Title { get; }
 
-    public string ContentId { get; }
-
-    public bool IsActive { get; set; }
+    bool IsSelected { get; set; }
 }

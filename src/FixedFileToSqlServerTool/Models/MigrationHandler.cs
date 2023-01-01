@@ -23,7 +23,7 @@ public class MigrationHandler
 
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await transaction.RollbackAsync();
             return false;

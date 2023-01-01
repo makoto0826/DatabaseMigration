@@ -2,33 +2,31 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
-using FixedFileToSqlServerTool.Models;
 using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
-public partial class MappingTablePaneViewModel : ObservableObject, IPaneViewModel
+[INotifyPropertyChanged]
+public partial class MappingTablePaneViewModel : IPaneViewModel
 {
     [ObservableProperty]
-    private string name;
+    private string title;
 
     [ObservableProperty]
-    private bool isActive;
+    private bool isSelected;
 
     [ObservableProperty]
     private bool isDirty;
 
-    public string ContentId => nameof(MappingTablePaneViewModel);
-
     public ObjectId Id { get; }
 
-    private readonly MappingTableDefinition _table;
+    private readonly MappingTableWidgetViewModel _mappingTableWidget;
 
-    public MappingTablePaneViewModel(MappingTableDefinition table)
+    public MappingTablePaneViewModel(MappingTableWidgetViewModel mappingTableWidget)
     {
-        _table = table;
-        this.Name = _table.Name;
-        this.Id = _table.Id;
+        _mappingTableWidget = mappingTableWidget;
+        this.Title = mappingTableWidget.Table.Name;
+        this.Id = mappingTableWidget.Table.Id;
     }
 
     [RelayCommand]

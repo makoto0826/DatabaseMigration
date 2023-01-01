@@ -2,7 +2,7 @@ using LiteDB;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public record Script
+public record class Script
 {
     private const string DefaultCode = @"using System;
 // テストデータは、Value変数から取得します。Valueの型はString

@@ -2,8 +2,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
-public partial class ScriptWidgetViewModel : ObservableObject
+[INotifyPropertyChanged]
+public partial class ScriptWidgetViewModel
 {
+    [ObservableProperty]
+    private bool isSelected;
+
     [ObservableProperty]
     private Models.Script script;
 

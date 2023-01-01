@@ -1,8 +1,8 @@
 namespace FixedFileToSqlServerTool.Models;
 
-public class FixedColumn
+public record class FixedColumn
 {
-    public int StartPosition { get; set; }
+    public int StartPosition { get; init; }
 
-    public int EndPosition { get; set; }
+    public int EndPosition { get; init; }
 }

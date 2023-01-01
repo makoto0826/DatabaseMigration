@@ -8,11 +8,12 @@ using HanumanInstitute.MvvmDialogs;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+[INotifyPropertyChanged]
+public partial class MainWindowViewModel
 {
     public ObservableCollection<IPaneViewModel> DocumentPanes { get; } = new();
 
-    public ObservableCollection<MappingTableDefinition> MappingTables { get; } = new();
+    public ObservableCollection<MappingTableWidgetViewModel> MappingTables { get; } = new();
 
     public ObservableCollection<TableDefinition> Tables { get; } = new();
 
@@ -43,6 +44,25 @@ public partial class MainWindowViewModel : ObservableObject
 
         WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
         WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
+        WeakReferenceMessenger.Default.Register<ChangedIsAcitvePaneMessage>(this, this.HandleIsActiveChanged);
+    }
+
+    private void HandleIsActiveChanged(object _, ChangedIsAcitvePaneMessage mesage)
+    {
+        if (mesage.Value is ScriptPaneViewModel scriptVm)
+        {
+            foreach (var scriptWidget in this.Scripts)
+            {
+                scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.Id;
+            }
+        }
+        else if (mesage.Value is MappingTableWidgetViewModel mappingTableVm)
+        {
+            foreach (var mappingTableWidget in this.MappingTables)
+            {
+                mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.Id;
+            }
+        }
     }
 
     private void HandleClosePane(object _, ClosedPaneMessage message)
@@ -54,11 +74,11 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var storedScirptWidget = this.Scripts.FirstOrDefault(x => x.Script.Id == message.Value.Id);
 
-        if(storedScirptWidget is null)
+        if (storedScirptWidget is null)
         {
-            this.Scripts.Add(new (message.Value));
+            this.Scripts.Add(new(message.Value));
         }
-        else 
+        else
         {
             storedScirptWidget.Script = message.Value;
         }
@@ -88,6 +108,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         if (setting is null)
         {
+            _dialogService.ShowMessageBox(this, text: "データベースの設定情報がありません", title: "エラー");
             return;
         }
 
@@ -105,7 +126,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-
+            _dialogService.ShowMessageBox(this, text: ex.Message, title: "エラー");
         }
     }
 
@@ -113,9 +134,9 @@ public partial class MainWindowViewModel : ObservableObject
     private void AddMappingTable()
     {
         var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
-        this.MappingTables.Add(table);
+        this.MappingTables.Add(new(table));
 
-        var vm = new MappingTablePaneViewModel(table);
+        var vm = new MappingTablePaneViewModel(new(table));
         this.DocumentPanes.Add(vm);
     }
 
@@ -123,12 +144,12 @@ public partial class MainWindowViewModel : ObservableObject
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptPaneViewModel(new (script),_scriptRepository);
+        var vm = new ScriptPaneViewModel(new(script), _scriptRepository);
         this.DocumentPanes.Add(vm);
     }
 
-    [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    public void DeleteMappingTable(MappingTableDefinition table)
+    [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
+    public void DeleteMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
 
     }
@@ -139,28 +160,28 @@ public partial class MainWindowViewModel : ObservableObject
 
     }
 
-    [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    private void OpenMappingTable(MappingTableDefinition table)
+    [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
+    private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
         var vmList = this.DocumentPanes.OfType<MappingTablePaneViewModel>().ToList();
 
         foreach (var vm in vmList)
         {
-            vm.IsActive = false;
+            vm.IsSelected = false;
         }
 
-        var hitVm = vmList.FirstOrDefault(x => x.Id == table.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new MappingTablePaneViewModel(table)
+            this.DocumentPanes.Add(new MappingTablePaneViewModel(mappingTableWidget)
             {
-                IsActive = true
+                IsSelected = true
             });
         }
         else
         {
-            hitVm.IsActive = true;
+            hitVm.IsSelected = true;
         }
     }
 
@@ -171,25 +192,25 @@ public partial class MainWindowViewModel : ObservableObject
 
         foreach (var vm in vmList)
         {
-            vm.IsActive = false;
+            vm.IsSelected = false;
         }
 
         var hitVm = vmList.FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new ScriptPaneViewModel(scriptWidget,_scriptRepository)
+            this.DocumentPanes.Add(new ScriptPaneViewModel(scriptWidget, _scriptRepository)
             {
-                IsActive = true
+                IsSelected = true
             });
         }
         else
         {
-            hitVm.IsActive = true;
+            hitVm.IsSelected = true;
         }
     }
 
-    private bool CheckMappingTable(MappingTableDefinition? table) => table is not null;
+    private bool CheckMappingTableWidget(MappingTableWidgetViewModel? mappingTableWidget) => mappingTableWidget is not null;
 
     private bool CheckScriptWidget(ScriptWidgetViewModel? scriptWidget) => scriptWidget is not null;
 }

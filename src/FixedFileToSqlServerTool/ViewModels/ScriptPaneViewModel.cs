@@ -8,13 +8,14 @@ using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
-public partial class ScriptPaneViewModel : ObservableObject, IPaneViewModel
+[INotifyPropertyChanged]
+public partial class ScriptPaneViewModel : IPaneViewModel
 {
     [ObservableProperty]
-    private string name;
+    private string title;
 
     [ObservableProperty]
-    private bool isActive;
+    private bool isSelected;
 
     [ObservableProperty]
     private bool isDirty;
@@ -28,23 +29,26 @@ public partial class ScriptPaneViewModel : ObservableObject, IPaneViewModel
     [ObservableProperty]
     private string testData;
 
-    public string ContentId => nameof(ScriptPaneViewModel);
-
     public ObjectId Id { get; }
 
     private readonly ScriptWidgetViewModel _scriptWidget;
 
     private readonly ScriptRepository _scriptRepository;
 
-    public ScriptPaneViewModel(ScriptWidgetViewModel scriptWidget,ScriptRepository scriptRepository)
+    public ScriptPaneViewModel(ScriptWidgetViewModel scriptWidget, ScriptRepository scriptRepository)
     {
         _scriptWidget = scriptWidget;
         _scriptRepository = scriptRepository;
 
-        this.Name = _scriptWidget.Script.Name;
+        this.Title = _scriptWidget.Script.Name;
         this.Id = _scriptWidget.Script.Id;
         this.codeDocument = new TextDocument(_scriptWidget.Script.Code);
         this.logDocument = new TextDocument();
+    }
+
+    partial void OnIsSelectedChanged(bool _)
+    {
+        WeakReferenceMessenger.Default.Send(new ChangedIsAcitvePaneMessage(this));
     }
 
     [RelayCommand]
@@ -53,8 +57,9 @@ public partial class ScriptPaneViewModel : ObservableObject, IPaneViewModel
     [RelayCommand]
     private void Save()
     {
-        var newScript = _scriptWidget.Script with {
-            Name = this.Name,
+        var newScript = _scriptWidget.Script with
+        {
+            Name = this.Title,
             Code = this.CodeDocument.Text,
             UpdatedAt = DateTime.Now
         };

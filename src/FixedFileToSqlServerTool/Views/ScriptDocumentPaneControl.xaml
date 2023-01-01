@@ -25,7 +25,7 @@
                     </Button>
                     <Separator Margin="4,0" />
                     <Label Content="スクリプト名" />
-                    <TextBox Width="200" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Width="200" Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <Separator Margin="4,0"  />
                     <Button Padding="2,4" Name="TestExecuteButton" ToolTip="テスト" Command="{Binding TestRunCommand}">
                         <StackPanel Orientation="Horizontal">
