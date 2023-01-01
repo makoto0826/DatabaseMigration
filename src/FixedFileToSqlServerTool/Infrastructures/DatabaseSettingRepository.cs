@@ -20,9 +20,9 @@ public class DatabaseSettingRepository
     public DatabaseSetting? Get() =>
         _database.GetCollection<DatabaseSetting>().FindAll().FirstOrDefault();
 
-    public void Save(DatabaseSetting setting) =>
-        _database.GetCollection<DatabaseSetting>().Upsert(setting);
-
-    public void Delete(DatabaseSetting setting) =>
-        _database.GetCollection<DatabaseSetting>().Delete(setting.Id);
+    public void Save(DatabaseSetting setting)
+    {
+        _database.GetCollection<DatabaseSetting>().DeleteAll();
+        _database.GetCollection<DatabaseSetting>().Insert(setting);
+    }
 }
