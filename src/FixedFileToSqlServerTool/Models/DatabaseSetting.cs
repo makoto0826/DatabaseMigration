@@ -1,14 +1,14 @@
 namespace FixedFileToSqlServerTool.Models;
 
-public class DatabaseSetting
+public record class DatabaseSetting
 {
-    public string Server { get; set; }
+    public string Server { get; init; } = String.Empty;
 
-    public int? Port { get; set; }
+    public int? Port { get; init; }
 
-    public string UserId { get; set; }
+    public string UserId { get; init; } = String.Empty;
 
-    public string Password { get; set; }
+    public string Password { get; init; } = String.Empty;
 
-    public string Database { get; set; }
+    public string Database { get; init; } = String.Empty;
 }

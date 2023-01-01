@@ -11,11 +11,11 @@ public record Script
 
 return Value;";
 
-    public ObjectId Id { get; init; }
+    public required ObjectId Id { get; init; }
 
-    public string Name { get; init; }
+    public string Name { get; init; } = String.Empty;
 
-    public string Code { get; init; }
+    public string Code { get; init; } = String.Empty;
 
     public DateTime UpdatedAt { get; init; }
 

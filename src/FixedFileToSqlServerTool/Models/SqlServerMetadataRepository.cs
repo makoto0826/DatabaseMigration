@@ -60,11 +60,11 @@ ORDER BY
     {
         public int object_id;
 
-        public string table_name;
+        public string table_name = String.Empty;
 
-        public string column_name;
+        public string column_name = String.Empty;
 
-        public string column_type;
+        public string column_type = String.Empty;
 
         public int max_length;
 

@@ -1,10 +1,10 @@
 namespace FixedFileToSqlServerTool.Models;
 
-public class TableDefinition
+public record class TableDefinition
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
-    public List<ColumnDefinition> Columns { get; set; } = new();
+    public required List<ColumnDefinition> Columns { get; init; }
 }
