@@ -3,26 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseMigration.Core", "DatabaseMigration.Core\DatabaseMigration.Core.csproj", "{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseMigration.Generator", "src/DatabaseMigration.Generator\DatabaseMigration.Generator.csproj", "{C31205F4-8255-4B82-BE80-59327677CF95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseMigration.Generator", "DatabaseMigration.Generator\DatabaseMigration.Generator.csproj", "{C31205F4-8255-4B82-BE80-59327677CF95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FixedFileToSqlServerTool", "src/FixedFileToSqlServerTool\FixedFileToSqlServerTool.csproj", "{0CEDD8A8-3026-41DA-A0C6-96780D85B091}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EED122F-6822-4D94-8FB3-75CFEF8D4BAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C31205F4-8255-4B82-BE80-59327677CF95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C31205F4-8255-4B82-BE80-59327677CF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C31205F4-8255-4B82-BE80-59327677CF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C31205F4-8255-4B82-BE80-59327677CF95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CEDD8A8-3026-41DA-A0C6-96780D85B091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CEDD8A8-3026-41DA-A0C6-96780D85B091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CEDD8A8-3026-41DA-A0C6-96780D85B091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CEDD8A8-3026-41DA-A0C6-96780D85B091}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDB19EDC-DAAE-4FF9-B741-9176DDA20014}
 	EndGlobalSection
 EndGlobal
