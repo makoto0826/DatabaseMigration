@@ -1,12 +1,12 @@
 namespace FixedFileToSqlServerTool.Models;
 
-public class ColumnDefinition
+public record class ColumnDefinition
 {
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
-    public string Type { get; set; }
+    public required string Type { get; init; }
 
-    public int MaxLength { get; set; }
+    public int MaxLength { get; init; }
 
-    public bool IsNullable { get; set; }
+    public bool IsNullable { get; init; }
 }
