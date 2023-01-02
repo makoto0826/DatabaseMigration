@@ -24,8 +24,7 @@
         <ad:DockingManager
             DockPanel.Dock="Bottom"
             x:Name="RootDockingManager"
-            DocumentsSource="{Binding DocumentPanes}"
-            >
+            DocumentsSource="{Binding Documents}">
 
             <ad:DockingManager.LayoutItemTemplateSelector>
                 <view:LayoutItemTemplateSelector>

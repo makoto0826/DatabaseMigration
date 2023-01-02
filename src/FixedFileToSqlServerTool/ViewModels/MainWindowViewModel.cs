@@ -11,7 +11,7 @@ namespace FixedFileToSqlServerTool.ViewModels;
 [INotifyPropertyChanged]
 public partial class MainWindowViewModel
 {
-    public ObservableCollection<IPaneViewModel> DocumentPanes { get; } = new();
+    public ObservableCollection<IPaneViewModel> Documents { get; } = new();
 
     public ObservableCollection<MappingTableWidgetViewModel> MappingTables { get; } = new();
 
@@ -63,11 +63,15 @@ public partial class MainWindowViewModel
                 mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.Id;
             }
         }
+        else
+        {
+
+        }
     }
 
     private void HandleClosePane(object _, ClosedPaneMessage message)
     {
-        this.DocumentPanes.Remove(message.Value);
+        this.Documents.Remove(message.Value);
     }
 
     private void HandleSavedScript(object _, SavedScriptMessage message)
@@ -137,7 +141,7 @@ public partial class MainWindowViewModel
         this.MappingTables.Add(new(table));
 
         var vm = new MappingTablePaneViewModel(new(table));
-        this.DocumentPanes.Add(vm);
+        this.Documents.Add(vm);
     }
 
     [RelayCommand]
@@ -145,7 +149,7 @@ public partial class MainWindowViewModel
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
         var vm = new ScriptPaneViewModel(new(script), _scriptRepository);
-        this.DocumentPanes.Add(vm);
+        this.Documents.Add(vm);
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
@@ -163,7 +167,7 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
     private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
-        var vmList = this.DocumentPanes.OfType<MappingTablePaneViewModel>().ToList();
+        var vmList = this.Documents.OfType<MappingTablePaneViewModel>().ToList();
 
         foreach (var vm in vmList)
         {
@@ -174,7 +178,7 @@ public partial class MainWindowViewModel
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new MappingTablePaneViewModel(mappingTableWidget)
+            this.Documents.Add(new MappingTablePaneViewModel(mappingTableWidget)
             {
                 IsSelected = true
             });
@@ -188,7 +192,7 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckScriptWidget))]
     private void OpenScript(ScriptWidgetViewModel scriptWidget)
     {
-        var vmList = this.DocumentPanes.OfType<ScriptPaneViewModel>().ToList();
+        var vmList = this.Documents.OfType<ScriptPaneViewModel>().ToList();
 
         foreach (var vm in vmList)
         {
@@ -199,7 +203,7 @@ public partial class MainWindowViewModel
 
         if (hitVm is null)
         {
-            this.DocumentPanes.Add(new ScriptPaneViewModel(scriptWidget, _scriptRepository)
+            this.Documents.Add(new ScriptPaneViewModel(scriptWidget, _scriptRepository)
             {
                 IsSelected = true
             });
