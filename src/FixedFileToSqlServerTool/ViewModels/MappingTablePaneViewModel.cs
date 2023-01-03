@@ -1,8 +1,10 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
+using ICSharpCode.AvalonEdit.Document;
 using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
@@ -19,30 +21,40 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
     [ObservableProperty]
     private bool isDirty;
 
-    public ObjectId Id { get; }
+    [ObservableProperty]
+    private string filePath;
 
-    private readonly MappingTableWidgetViewModel _mappingTableWidget;
+    [ObservableProperty]
+    private TableWidgetViewModel selectedTable;
+
+    [ObservableProperty]
+    private TextDocument logDocument;
+
+    public ObjectId Id { get; }
 
     private readonly MappingTableDefinitionRepository _mappingTableDefinitionRepository;
 
-    private readonly TableDefinitionRepository _tableDefinitionRepository;
+    private readonly MappingTableWidgetViewModel _mappingTableWidget;
 
-    private readonly ScriptRepository _scriptRepository;
+    public ObservableCollection<ScriptWidgetViewModel> Scripts { get; }
+
+    public ObservableCollection<TableWidgetViewModel> Tables { get; }
 
     public MappingTablePaneViewModel(
         MappingTableWidgetViewModel mappingTableWidget,
-        MappingTableDefinitionRepository mappingTableDefinitionRepository,
-        TableDefinitionRepository tableDefinitionRepository,
-        ScriptRepository scriptRepository
+        ObservableCollection<ScriptWidgetViewModel> scripts,
+        ObservableCollection<TableWidgetViewModel> tables,
+        MappingTableDefinitionRepository mappingTableDefinitionRepository
     )
     {
         _mappingTableWidget = mappingTableWidget;
         _mappingTableDefinitionRepository = mappingTableDefinitionRepository;
-        _tableDefinitionRepository = tableDefinitionRepository;
-        _scriptRepository = scriptRepository;
 
         this.Title = mappingTableWidget.Table.Name;
         this.Id = mappingTableWidget.Table.Id;
+        this.Scripts = scripts;
+        this.Tables = tables;
+        this.LogDocument = new();
     }
 
     partial void OnIsSelectedChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
@@ -58,6 +70,15 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
         _mappingTableDefinitionRepository.Save(newMappingTable);
         WeakReferenceMessenger.Default.Send(new MappingTableDefinitionMessage(newMappingTable));
     }
+
+    [RelayCommand]
+    private void Open() { }
+
+    [RelayCommand]
+    private void Execute() { }
+
+    [RelayCommand]
+    private void Test() { }
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));

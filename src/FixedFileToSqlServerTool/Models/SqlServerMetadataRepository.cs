@@ -1,5 +1,4 @@
 using Dapper;
-using FixedFileToSqlServerTool.Models;
 using Microsoft.Data.SqlClient;
 
 namespace FixedFileToSqlServerTool.Models;

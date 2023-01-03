@@ -151,9 +151,9 @@ public partial class MainWindowViewModel
         var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
         var vm = new MappingTablePaneViewModel(
             new(table),
-            _mappingTableDefinitionRepository,
-            _tableDefinitionRepository,
-            _scriptRepository
+            this.Scripts,
+            this.Tables,
+            _mappingTableDefinitionRepository
         );
 
         this.Documents.Add(vm);
@@ -230,9 +230,10 @@ public partial class MainWindowViewModel
         {
             this.Documents.Add(new MappingTablePaneViewModel(
                 mappingTableWidget,
-                _mappingTableDefinitionRepository,
-                _tableDefinitionRepository,
-                _scriptRepository)
+                this.Scripts,
+                this.Tables,
+                _mappingTableDefinitionRepository
+            )
             {
                 IsSelected = true
             });

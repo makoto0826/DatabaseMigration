@@ -1,16 +1,18 @@
 ﻿<UserControl x:Class="FixedFileToSqlServerTool.Views.MappingTableDocumentPaneControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="600*" />
+            <RowDefinition Height="500*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="200*" />
+            <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
@@ -31,12 +33,20 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="テーブル名" />
-                    <ComboBox />
+                    <ComboBox x:Name="TableComboBox" ItemsSource="{Binding Tables}" MinWidth="250">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Table.Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
                 <Separator />
-                <DataGrid  ItemsSource="{Binding SelectedTable.Columns}" AutoGenerateColumns="False" IsReadOnly="True" >
+                <DataGrid ItemsSource="{Binding ElementName=TableComboBox,Path=SelectedValue.Table.Columns}"
+                          SelectionMode="Single"
+                          AutoGenerateColumns="False" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="自動生成" Binding="{Binding IsGeneration}"/>
+                        <DataGridCheckBoxColumn Header="自動生成" Binding="{Binding IsGeneration}"/>
                         <DataGridTextColumn Header="開始位置" Binding="{Binding StartPosition}"/>
                         <DataGridTextColumn Header="終了位置" Binding="{Binding EndPosition}"/>
                         <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Name}"/>
@@ -51,15 +61,6 @@
         <StackPanel Grid.Row="2">
             <StackPanel DockPanel.Dock="Top" Background="White">
                 <ToolBar ToolBarTray.IsLocked="True">
-                    <Button Padding="2,4" ToolTip="開く" Command="{Binding OpenCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="開く" />
-                        </StackPanel>
-                    </Button>
-                    <Separator Margin="4,0" />
-                    <Label Content="ファイルパス" />
-                    <TextBox Width="200" IsReadOnly="True" Text="{Binding FilePath,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-                    <Separator Margin="4,0"  />
                     <Button Padding="2,4" ToolTip="実行" Command="{Binding ExecuteCommand}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconModern Kind="ControlPlay" />
@@ -73,7 +74,27 @@
                             <TextBlock Margin="3,0,0,0" FontSize="12" Text="テスト実行" />
                         </StackPanel>
                     </Button>
+                    <Separator Margin="4,0"  />
+                    <Button Padding="2,4" ToolTip="開く" Command="{Binding OpenCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="開く" />
+                        </StackPanel>
+                    </Button>
+                    <Label Content="ファイルパス" />
+                    <TextBox Width="300" IsReadOnly="True" Text="{Binding FilePath,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
                 </ToolBar>
+                <Separator />
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <Label Content="テストデータ" DockPanel.Dock="Top" />
+                        <Separator />
+                    </StackPanel>
+                    <ae:TextEditor DockPanel.Dock="Bottom"
+                        FontSize="10pt"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"
+                        Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
             </StackPanel>
             <Separator />
         </StackPanel>
