@@ -33,6 +33,11 @@
                             <view:MappingTableDocumentPaneControl  />
                         </DataTemplate>
                     </view:LayoutItemTemplateSelector.MappingTableTemplate>
+                    <view:LayoutItemTemplateSelector.TableTemplate>
+                        <DataTemplate>
+                            <view:TableDocumentPaneControl  />
+                        </DataTemplate>
+                    </view:LayoutItemTemplateSelector.TableTemplate>
                     <view:LayoutItemTemplateSelector.ScriptTemplate>
                         <DataTemplate>
                             <view:ScriptDocumentPaneControl  />
@@ -50,6 +55,14 @@
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>
                     </view:LayoutItemContainerStyleSelector.MappingTableStyle>
+                    <view:LayoutItemContainerStyleSelector.TableStyle>
+                        <Style TargetType="{x:Type ad:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="IsSelected" Value="{Binding Model.IsSelected,Mode=TwoWay}" />
+                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                        </Style>
+                    </view:LayoutItemContainerStyleSelector.TableStyle>
+
                     <view:LayoutItemContainerStyleSelector.ScriptStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
                             <Setter Property="Title" Value="{Binding Model.Title}" />
@@ -78,20 +91,27 @@
                                 <TreeView x:Name="MappingTableTreeView" ItemsSource="{Binding MappingTables}">
                                     <TreeView.Resources>
                                         <ContextMenu x:Key="MappingTableContextMenu">
-                                            <MenuItem Header="開く"
+                                            <MenuItem Header="開く(_D)"
                                                 Command="{Binding
                                                     Path=PlacementTarget.Tag.OpenMappingTableCommand,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                 CommandParameter="{Binding
                                                     Path=PlacementTarget.DataContext,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
-                                            <MenuItem Header="削除" />
+                                            <MenuItem Header="削除(_D)"
+                                                Command="{Binding
+                                                    Path=PlacementTarget.Tag.DeleteMappingTableCommand,
+                                                    RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                CommandParameter="{Binding
+                                                    Path=PlacementTarget.DataContext,
+                                                    RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                         </ContextMenu>
                                     </TreeView.Resources>
                                     <TreeView.ItemContainerStyle>
                                         <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
                                             <Setter Property="Tag" Value="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"/>
                                             <Setter Property="ContextMenu" Value="{Binding Source={StaticResource MappingTableContextMenu}}"/>
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                                         </Style>
                                     </TreeView.ItemContainerStyle>
                                     <TreeView.ItemTemplate>
@@ -140,19 +160,19 @@
                                         <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
                                             <Setter Property="Tag" Value="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"/>
                                             <Setter Property="ContextMenu" Value="{Binding Source={StaticResource TableContextMenu}}"/>
-                                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay}"/>
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                                         </Style>
                                     </TreeView.ItemContainerStyle>
                                     <TreeView.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Text="{Binding Table.Name}" />
                                         </DataTemplate>
                                     </TreeView.ItemTemplate>
 
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDoubleClick">
                                             <i:InvokeCommandAction
-                                                Command="{Binding OpenScriptCommand}"
+                                                Command="{Binding OpenTableCommand}"
                                                 CommandParameter="{Binding ElementName=TableTreeView, Path=SelectedItem}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
@@ -181,14 +201,20 @@
                                                 CommandParameter="{Binding
                                                     Path=PlacementTarget.DataContext,
                                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
-                                            <MenuItem Header="削除(_D)" />
+                                            <MenuItem Header="削除(_D)"
+                                                Command="{Binding
+                                                    Path=PlacementTarget.Tag.DeleteScriptCommand,
+                                                    RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                CommandParameter="{Binding
+                                                    Path=PlacementTarget.DataContext,
+                                                    RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                         </ContextMenu>
                                     </TreeView.Resources>
                                     <TreeView.ItemContainerStyle>
                                         <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}">
                                             <Setter Property="Tag" Value="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"/>
                                             <Setter Property="ContextMenu" Value="{Binding Source={StaticResource ScriptContextMenu}}"/>
-                                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay}"/>
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                                         </Style>
                                     </TreeView.ItemContainerStyle>
                                     <TreeView.ItemTemplate>

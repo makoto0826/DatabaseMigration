@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -15,7 +16,7 @@ public partial class MainWindowViewModel
 
     public ObservableCollection<MappingTableWidgetViewModel> MappingTables { get; } = new();
 
-    public ObservableCollection<TableDefinition> Tables { get; } = new();
+    public ObservableCollection<TableWidgetViewModel> Tables { get; } = new();
 
     public ObservableCollection<ScriptWidgetViewModel> Scripts { get; } = new();
 
@@ -25,6 +26,8 @@ public partial class MainWindowViewModel
 
     private readonly DatabaseSettingRepository _databaseSettingRepository;
 
+    private readonly MappingTableDefinitionRepository _mappingTableDefinitionRepository;
+
     private readonly TableDefinitionRepository _tableDefinitionRepository;
 
     private readonly ScriptRepository _scriptRepository;
@@ -33,11 +36,13 @@ public partial class MainWindowViewModel
 
     public MainWindowViewModel(
         DatabaseSettingRepository databaseSettingRepository,
+        MappingTableDefinitionRepository mappingTableDefinitionRepository,
         TableDefinitionRepository tableDefinitionRepository,
         ScriptRepository scriptRepository,
         IDialogService dialogService)
     {
         _databaseSettingRepository = databaseSettingRepository;
+        _mappingTableDefinitionRepository = mappingTableDefinitionRepository;
         _tableDefinitionRepository = tableDefinitionRepository;
         _scriptRepository = scriptRepository;
         _dialogService = dialogService;
@@ -63,8 +68,12 @@ public partial class MainWindowViewModel
                 mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.Id;
             }
         }
-        else
+        else if (mesage.Value is TablePaneViewModel tableVm)
         {
+            foreach (var tableWidget in this.Tables)
+            {
+                tableWidget.IsSelected = tableWidget.Table.Id == tableVm.Id;
+            }
 
         }
     }
@@ -91,8 +100,11 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void Loaded()
     {
+        var mappingTables = _mappingTableDefinitionRepository.FindAll();
+        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x)));
+
         var tables = _tableDefinitionRepository.FindAll();
-        this.Tables.AddRange(tables);
+        this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
 
         var scripts = _scriptRepository.FindAll();
         this.Scripts.AddRange(scripts.Select(x => new ScriptWidgetViewModel(x)));
@@ -126,7 +138,7 @@ public partial class MainWindowViewModel
 
             _tableDefinitionRepository.Save(tables);
             this.Tables.Clear();
-            this.Tables.AddRange(tables);
+            this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
         }
         catch (Exception ex)
         {
@@ -138,8 +150,6 @@ public partial class MainWindowViewModel
     private void AddMappingTable()
     {
         var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
-        this.MappingTables.Add(new(table));
-
         var vm = new MappingTablePaneViewModel(new(table));
         this.Documents.Add(vm);
     }
@@ -152,28 +162,58 @@ public partial class MainWindowViewModel
         this.Documents.Add(vm);
     }
 
-    [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
+    [RelayCommand(CanExecute = nameof(CheckMappingTable))]
     public void DeleteMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
+        var isOk = _dialogService.ShowMessageBox(this,
+            text: $"{mappingTableWidget.Table.Name}を削除しますか?",
+            title: "マッピングテーブル削除",
+            MessageBoxButton.YesNo);
 
+        if (!isOk ?? false)
+        {
+            return;
+        }
+
+        _mappingTableDefinitionRepository.Delete(mappingTableWidget.Table);
+
+        this.MappingTables.Remove(mappingTableWidget);
+        var vm = this.Documents.OfType<MappingTablePaneViewModel>().FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
+
+        if (vm is not null)
+        {
+            this.Documents.Remove(vm);
+        }
     }
 
-    [RelayCommand(CanExecute = nameof(CheckScriptWidget))]
+    [RelayCommand(CanExecute = nameof(CheckScript))]
     private void DeleteScript(ScriptWidgetViewModel scriptWidget)
     {
+        var isOk = _dialogService.ShowMessageBox(this,
+            text: $"{scriptWidget.Script.Name}を削除しますか?",
+            title: "スクリプト削除",
+            MessageBoxButton.YesNo);
 
+        if (!isOk ?? false)
+        {
+            return;
+        }
+
+        _scriptRepository.Delete(scriptWidget.Script);
+
+        this.Scripts.Remove(scriptWidget);
+        var vm = this.Documents.OfType<ScriptPaneViewModel>().FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
+
+        if (vm is not null)
+        {
+            this.Documents.Remove(vm);
+        }
     }
 
-    [RelayCommand(CanExecute = nameof(CheckMappingTableWidget))]
+    [RelayCommand(CanExecute = nameof(CheckMappingTable))]
     private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
         var vmList = this.Documents.OfType<MappingTablePaneViewModel>().ToList();
-
-        foreach (var vm in vmList)
-        {
-            vm.IsSelected = false;
-        }
-
         var hitVm = vmList.FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
 
         if (hitVm is null)
@@ -189,16 +229,29 @@ public partial class MainWindowViewModel
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CheckScriptWidget))]
+    [RelayCommand(CanExecute = nameof(CheckTable))]
+    private void OpenTable(TableWidgetViewModel tableWidget)
+    {
+        var vmList = this.Documents.OfType<TablePaneViewModel>().ToList();
+        var hitVm = vmList.FirstOrDefault(x => x.Id == tableWidget.Table.Id);
+
+        if (hitVm is null)
+        {
+            this.Documents.Add(new TablePaneViewModel(tableWidget)
+            {
+                IsSelected = true
+            });
+        }
+        else
+        {
+            hitVm.IsSelected = true;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CheckScript))]
     private void OpenScript(ScriptWidgetViewModel scriptWidget)
     {
         var vmList = this.Documents.OfType<ScriptPaneViewModel>().ToList();
-
-        foreach (var vm in vmList)
-        {
-            vm.IsSelected = false;
-        }
-
         var hitVm = vmList.FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
 
         if (hitVm is null)
@@ -214,7 +267,9 @@ public partial class MainWindowViewModel
         }
     }
 
-    private bool CheckMappingTableWidget(MappingTableWidgetViewModel? mappingTableWidget) => mappingTableWidget is not null;
+    private bool CheckMappingTable(MappingTableWidgetViewModel? mappingTableWidget) => mappingTableWidget is not null;
 
-    private bool CheckScriptWidget(ScriptWidgetViewModel? scriptWidget) => scriptWidget is not null;
+    private bool CheckTable(TableWidgetViewModel? tableWidget) => tableWidget is not null;
+
+    private bool CheckScript(ScriptWidgetViewModel? scriptWidget) => scriptWidget is not null;
 }

@@ -53,6 +53,7 @@ ORDER BY
                         .ToList()
                 };
             })
+            .OrderBy(x => x.Name)
             .ToList();
     }
 

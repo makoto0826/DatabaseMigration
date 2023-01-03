@@ -8,6 +8,8 @@ public class LayoutItemContainerStyleSelector : StyleSelector
 {
     public Style MappingTableStyle { get; set; }
 
+    public Style TableStyle { get; set; }
+
     public Style ScriptStyle { get; set; }
 
     public override Style SelectStyle(object item, DependencyObject container) =>
@@ -15,6 +17,7 @@ public class LayoutItemContainerStyleSelector : StyleSelector
         {
             MappingTablePaneViewModel => MappingTableStyle,
             ScriptPaneViewModel => ScriptStyle,
+            TablePaneViewModel => TableStyle,
             _ => base.SelectStyle(item, container)
         };
 }
