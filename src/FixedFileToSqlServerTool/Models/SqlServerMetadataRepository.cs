@@ -59,7 +59,7 @@ ORDER BY
 
     private class Row
     {
-        public int object_id;
+        public int object_id = 0;
 
         public string table_name = String.Empty;
 
@@ -67,8 +67,8 @@ ORDER BY
 
         public string column_type = String.Empty;
 
-        public int max_length;
+        public int max_length = 0;
 
-        public bool is_nullable;
+        public bool is_nullable = false;
     }
 }

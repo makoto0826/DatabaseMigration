@@ -2,18 +2,19 @@ using LiteDB;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public class MappingTableDefinition
+public record class MappingTableDefinition
 {
-    public ObjectId Id { get; set; }
+    public required ObjectId Id { get; init; }
 
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
-    public List<MappingColumnDefinition> Columns { get; } = new List<MappingColumnDefinition>();
+    public required List<MappingColumnDefinition> Columns { get; init; }
 
     public static MappingTableDefinition Create(string name) =>
         new MappingTableDefinition
         {
             Id = ObjectId.NewObjectId(),
-            Name = name
+            Name = name,
+            Columns = new List<MappingColumnDefinition>()
         };
 }

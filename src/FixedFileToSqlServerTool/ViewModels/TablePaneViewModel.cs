@@ -33,7 +33,7 @@ public partial class TablePaneViewModel : IPaneViewModel
         this.table = tableWidget.Table;
     }
 
-    partial void OnIsSelectedChanged(bool _) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
+    partial void OnIsSelectedChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));

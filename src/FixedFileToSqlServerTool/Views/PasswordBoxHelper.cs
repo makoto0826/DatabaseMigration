@@ -35,19 +35,19 @@ public class PasswordBoxHelper : DependencyObject
 
         if ((bool)e.OldValue)
         {
-            passwordBox.PasswordChanged -= PasswordBoxHelper.PasswordBox_PasswordChanged;
+            passwordBox!.PasswordChanged -= PasswordBoxHelper.PasswordBox_PasswordChanged;
         }
 
         if ((bool)e.NewValue)
         {
-            passwordBox.PasswordChanged += PasswordBoxHelper.PasswordBox_PasswordChanged;
+            passwordBox!.PasswordChanged += PasswordBoxHelper.PasswordBox_PasswordChanged;
         }
     }
 
     private static void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
     {
         var passwordBox = sender as PasswordBox;
-        PasswordBoxHelper.SetPassword(passwordBox, passwordBox.Password);
+        PasswordBoxHelper.SetPassword(passwordBox!, passwordBox!.Password);
     }
 
     private static void PasswordProperty_Changed(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -55,12 +55,12 @@ public class PasswordBoxHelper : DependencyObject
         var passwordBox = sender as PasswordBox;
         var newPassword = (string)e.NewValue;
 
-        if (!GetIsAttached(passwordBox))
+        if (!GetIsAttached(passwordBox!))
         {
-            SetIsAttached(passwordBox, true);
+            SetIsAttached(passwordBox!, true);
         }
 
-        if ((string.IsNullOrEmpty(passwordBox.Password) && string.IsNullOrEmpty(newPassword)) ||
+        if ((string.IsNullOrEmpty(passwordBox!.Password) && string.IsNullOrEmpty(newPassword)) ||
             passwordBox.Password == newPassword)
         {
             return;

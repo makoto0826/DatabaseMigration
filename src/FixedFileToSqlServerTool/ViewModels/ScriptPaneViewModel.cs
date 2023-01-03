@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FixedFileToSqlServerTool.Hanlders;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using ICSharpCode.AvalonEdit.Document;
@@ -35,10 +36,16 @@ public partial class ScriptPaneViewModel : IPaneViewModel
 
     private readonly ScriptRepository _scriptRepository;
 
-    public ScriptPaneViewModel(ScriptWidgetViewModel scriptWidget, ScriptRepository scriptRepository)
+    private readonly ScriptHandler _scriptHandler;
+
+    public ScriptPaneViewModel(
+        ScriptWidgetViewModel scriptWidget,
+        ScriptRepository scriptRepository,
+        ScriptHandler scriptHandler)
     {
         _scriptWidget = scriptWidget;
         _scriptRepository = scriptRepository;
+        _scriptHandler = scriptHandler;
 
         this.Title = _scriptWidget.Script.Name;
         this.Id = _scriptWidget.Script.Id;
@@ -46,7 +53,7 @@ public partial class ScriptPaneViewModel : IPaneViewModel
         this.logDocument = new TextDocument();
     }
 
-    partial void OnIsSelectedChanged(bool _) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
+    partial void OnIsSelectedChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
@@ -70,7 +77,7 @@ public partial class ScriptPaneViewModel : IPaneViewModel
     private async Task Test()
     {
         this.LogDocument = new TextDocument("実行中...しばらくお待ちください");
-        var result = await ScriptRunner.RunAsync(this.CodeDocument.Text, new ScriptVariables { Value = this.testData });
+        var result = await _scriptHandler.HandleAsync(new ScriptHandlerContext(this.CodeDocument.Text, this.testData));
 
         if (result.IsSucceeded)
         {

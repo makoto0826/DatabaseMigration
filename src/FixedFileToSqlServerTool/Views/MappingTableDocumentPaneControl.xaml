@@ -28,6 +28,24 @@
                 </ToolBar>
             </StackPanel>
             <Separator />
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="テーブル名" />
+                    <ComboBox />
+                </StackPanel>
+                <Separator />
+                <DataGrid  ItemsSource="{Binding SelectedTable.Columns}" AutoGenerateColumns="False" IsReadOnly="True" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="自動生成" Binding="{Binding IsGeneration}"/>
+                        <DataGridTextColumn Header="開始位置" Binding="{Binding StartPosition}"/>
+                        <DataGridTextColumn Header="終了位置" Binding="{Binding EndPosition}"/>
+                        <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Type}"/>
+                        <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding IsNullable}"/>
+                        <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding MaxLength}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
         </StackPanel>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
         <StackPanel Grid.Row="2">

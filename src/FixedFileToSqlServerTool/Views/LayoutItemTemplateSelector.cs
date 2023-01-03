@@ -6,11 +6,11 @@ namespace FixedFileToSqlServerTool.Views;
 
 public class LayoutItemTemplateSelector : DataTemplateSelector
 {
-    public DataTemplate MappingTableTemplate { get; set; }
+    public required DataTemplate MappingTableTemplate { get; set; }
 
-    public DataTemplate TableTemplate { get; set; }
+    public required DataTemplate TableTemplate { get; set; }
 
-    public DataTemplate ScriptTemplate { get; set; }
+    public required DataTemplate ScriptTemplate { get; set; }
 
     public override DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container) =>
         item switch

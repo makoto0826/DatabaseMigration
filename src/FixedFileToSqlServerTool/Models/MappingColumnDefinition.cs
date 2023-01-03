@@ -2,15 +2,15 @@ using LiteDB;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public class MappingColumnDefinition
+public record class MappingColumnDefinition
 {
-    public bool IsGeneration { get; set; }
+    public bool IsGeneration { get; init; }
 
-    public FixedColumn? Source { get; set; }
+    public FixedColumn? Source { get; init; }
 
-    public ColumnDefinition Destination { get; set; }
+    public required ColumnDefinition Destination { get; init; }
 
-    public Script? GenerationScript { get; set; }
+    public Script? GenerationScript { get; init; }
 
-    public Script? ConvertScript { get; set; }
+    public Script? ConvertScript { get; init; }
 }

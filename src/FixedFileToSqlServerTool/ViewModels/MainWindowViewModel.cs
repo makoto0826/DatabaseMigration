@@ -1,7 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FixedFileToSqlServerTool.Hanlders;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
@@ -74,14 +77,10 @@ public partial class MainWindowViewModel
             {
                 tableWidget.IsSelected = tableWidget.Table.Id == tableVm.Id;
             }
-
         }
     }
 
-    private void HandleClosePane(object _, ClosedPaneMessage message)
-    {
-        this.Documents.Remove(message.Value);
-    }
+    private void HandleClosePane(object _, ClosedPaneMessage message) => this.Documents.Remove(message.Value);
 
     private void HandleSavedScript(object _, SavedScriptMessage message)
     {
@@ -150,7 +149,13 @@ public partial class MainWindowViewModel
     private void AddMappingTable()
     {
         var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
-        var vm = new MappingTablePaneViewModel(new(table));
+        var vm = new MappingTablePaneViewModel(
+            new(table),
+            _mappingTableDefinitionRepository,
+            _tableDefinitionRepository,
+            _scriptRepository
+        );
+
         this.Documents.Add(vm);
     }
 
@@ -158,7 +163,12 @@ public partial class MainWindowViewModel
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptPaneViewModel(new(script), _scriptRepository);
+        var vm = new ScriptPaneViewModel(
+            new(script),
+            _scriptRepository,
+            Ioc.Default.GetRequiredService<ScriptHandler>()
+        );
+
         this.Documents.Add(vm);
     }
 
@@ -218,7 +228,11 @@ public partial class MainWindowViewModel
 
         if (hitVm is null)
         {
-            this.Documents.Add(new MappingTablePaneViewModel(mappingTableWidget)
+            this.Documents.Add(new MappingTablePaneViewModel(
+                mappingTableWidget,
+                _mappingTableDefinitionRepository,
+                _tableDefinitionRepository,
+                _scriptRepository)
             {
                 IsSelected = true
             });
@@ -256,7 +270,10 @@ public partial class MainWindowViewModel
 
         if (hitVm is null)
         {
-            this.Documents.Add(new ScriptPaneViewModel(scriptWidget, _scriptRepository)
+            this.Documents.Add(new ScriptPaneViewModel(
+                scriptWidget,
+                _scriptRepository,
+                Ioc.Default.GetRequiredService<ScriptHandler>())
             {
                 IsSelected = true
             });

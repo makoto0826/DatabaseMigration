@@ -6,11 +6,11 @@ namespace FixedFileToSqlServerTool.Views;
 
 public class LayoutItemContainerStyleSelector : StyleSelector
 {
-    public Style MappingTableStyle { get; set; }
+    public required Style MappingTableStyle { get; set; }
 
-    public Style TableStyle { get; set; }
+    public required Style TableStyle { get; set; }
 
-    public Style ScriptStyle { get; set; }
+    public required Style ScriptStyle { get; set; }
 
     public override Style SelectStyle(object item, DependencyObject container) =>
         item switch
