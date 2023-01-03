@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="FixedFileToSqlServerTool.Views.MappingTableDocumentPaneControl"
+<UserControl x:Class="FixedFileToSqlServerTool.Views.MappingTableDocumentPaneControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -7,6 +7,7 @@
              xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             x:Name="MappingTableControl"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -53,6 +54,8 @@
                         <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Type}"/>
                         <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding IsNullable}"/>
                         <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding MaxLength}"/>
+                        <DataGridComboBoxColumn Header="変換スクリプト" ItemsSource="{Binding ElementName=MappingTableControl,Path=DataContext.Scripts}" />
+                        <DataGridComboBoxColumn Header="生成スクリプト" ItemsSource="{Binding ElementName=MappingTableControl,Path=DataContext.Scripts}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

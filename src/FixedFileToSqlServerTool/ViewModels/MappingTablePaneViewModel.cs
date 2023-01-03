@@ -52,8 +52,8 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
 
         this.Title = mappingTableWidget.Table.Name;
         this.Id = mappingTableWidget.Table.Id;
-        this.Scripts = scripts;
-        this.Tables = tables;
+        this.Scripts = new ObservableCollection<ScriptWidgetViewModel>(scripts);
+        this.Tables = new ObservableCollection<TableWidgetViewModel>(tables);
         this.LogDocument = new();
     }
 

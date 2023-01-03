@@ -36,16 +36,16 @@ public partial class ScriptPaneViewModel : IPaneViewModel
 
     private readonly ScriptRepository _scriptRepository;
 
-    private readonly ScriptHandler _scriptHandler;
+    private readonly ScriptRunner _scriptRunner;
 
     public ScriptPaneViewModel(
         ScriptWidgetViewModel scriptWidget,
         ScriptRepository scriptRepository,
-        ScriptHandler scriptHandler)
+        ScriptRunner _scriptRunner)
     {
         _scriptWidget = scriptWidget;
         _scriptRepository = scriptRepository;
-        _scriptHandler = scriptHandler;
+        this._scriptRunner = _scriptRunner;
 
         this.Title = _scriptWidget.Script.Name;
         this.Id = _scriptWidget.Script.Id;
@@ -77,7 +77,7 @@ public partial class ScriptPaneViewModel : IPaneViewModel
     private async Task Test()
     {
         this.LogDocument = new TextDocument("実行中...しばらくお待ちください");
-        var result = await _scriptHandler.HandleAsync(new ScriptHandlerContext(this.CodeDocument.Text, this.testData));
+        var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(this.CodeDocument.Text, this.testData));
 
         if (result.IsSucceeded)
         {

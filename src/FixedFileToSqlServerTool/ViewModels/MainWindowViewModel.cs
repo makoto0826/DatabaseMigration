@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FixedFileToSqlServerTool.Hanlders;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
@@ -166,7 +165,7 @@ public partial class MainWindowViewModel
         var vm = new ScriptPaneViewModel(
             new(script),
             _scriptRepository,
-            Ioc.Default.GetRequiredService<ScriptHandler>()
+            Ioc.Default.GetRequiredService<ScriptRunner>()
         );
 
         this.Documents.Add(vm);
@@ -274,7 +273,7 @@ public partial class MainWindowViewModel
             this.Documents.Add(new ScriptPaneViewModel(
                 scriptWidget,
                 _scriptRepository,
-                Ioc.Default.GetRequiredService<ScriptHandler>())
+                Ioc.Default.GetRequiredService<ScriptRunner>())
             {
                 IsSelected = true
             });

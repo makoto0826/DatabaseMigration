@@ -34,7 +34,7 @@ public partial class App : Application
                 .AddSingleton(x => new DatabaseSettingRepository(x.GetRequiredService<LiteDatabase>()))
                 .AddSingleton(x => new TableDefinitionRepository(x.GetRequiredService<LiteDatabase>()))
                 .AddSingleton(x => new MappingTableDefinitionRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new ScriptHandler())
+                .AddSingleton(x => new ScriptRunner())
                 .AddTransient<DatabaseSettingDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider()
