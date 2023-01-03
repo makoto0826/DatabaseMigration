@@ -4,7 +4,7 @@ namespace FixedFileToSqlServerTool.Models;
 
 public class MappingTableDefinitionRepository
 {
-    private const string CollectionName = "mappingTables";
+    private const string CollectionName = "mappingTableDefinitions";
 
     private readonly LiteDatabase _database;
 

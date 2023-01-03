@@ -67,7 +67,7 @@ public partial class ScriptPaneViewModel : IPaneViewModel
     }
 
     [RelayCommand]
-    private async Task TestRun()
+    private async Task Test()
     {
         this.LogDocument = new TextDocument("実行中...しばらくお待ちください");
         var result = await ScriptRunner.RunAsync(this.CodeDocument.Text, new ScriptVariables { Value = this.testData });
