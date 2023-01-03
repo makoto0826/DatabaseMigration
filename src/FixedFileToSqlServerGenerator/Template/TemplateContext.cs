@@ -1,6 +1,6 @@
-using DatabaseMigration.Data;
+using FixedFileToSqlServerGenerator.Data;
 
-namespace DatabaseMigration.Generator.Template;
+namespace FixedFileToSqlServerGenerator.Generator.Template;
 
 public class TemplateContext
 {

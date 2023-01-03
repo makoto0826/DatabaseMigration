@@ -1,10 +1,10 @@
 using System.Data;
-using DatabaseMigration.Data;
-using DatabaseMigration.Generator.Template;
+using FixedFileToSqlServerGenerator.Data;
+using FixedFileToSqlServerGenerator.Generator.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration.Generator;
+namespace FixedFileToSqlServerGenerator.Generator;
 
 public class Program
 {

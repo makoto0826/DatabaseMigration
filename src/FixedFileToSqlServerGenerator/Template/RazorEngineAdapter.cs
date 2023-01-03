@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RazorEngineCore;
 
-namespace DatabaseMigration.Generator.Template;
+namespace FixedFileToSqlServerGenerator.Generator.Template;
 
 public class RazorEngineAdapter
 {

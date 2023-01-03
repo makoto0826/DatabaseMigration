@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace DatabaseMigration.Data;
+namespace FixedFileToSqlServerGenerator.Data;
 
 public class DestinationColumn
 {

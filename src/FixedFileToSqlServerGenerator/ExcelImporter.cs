@@ -1,8 +1,8 @@
 using ClosedXML.Excel;
-using DatabaseMigration.Data;
+using FixedFileToSqlServerGenerator.Data;
 using Microsoft.Extensions.Logging;
 
-namespace DatabaseMigration.Generator;
+namespace FixedFileToSqlServerGenerator.Generator;
 
 public class ExcelImporter
 {

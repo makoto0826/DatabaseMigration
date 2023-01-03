@@ -1,4 +1,4 @@
-namespace DatabaseMigration.Generator.Template;
+namespace FixedFileToSqlServerGenerator.Generator.Template;
 
 public class TemplateResult
 {

@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <AssemblyName>DatabaseMigrationGen</AssemblyName>
+    <AssemblyName>FixedFileToSqlServerGenerator</AssemblyName>
     <VersionPrefix>0.0.1</VersionPrefix>
-    <Title>DatabaseMigration.Generator</Title>
-    <Description>DatabaseMigration.Generator</Description>
+    <Title>FixedFileToSqlServerGenerator</Title>
+    <Description>FixedFileToSqlServerGenerator</Description>
     <LangVersion>11</LangVersion>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
