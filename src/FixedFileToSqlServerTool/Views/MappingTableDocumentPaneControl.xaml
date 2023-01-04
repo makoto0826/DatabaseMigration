@@ -34,8 +34,8 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="テーブル名" />
                         <ComboBox x:Name="TableComboBox"
-                                  SelectedValuePath="Name"
-                                  SelectedValue="{Binding Table.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="Table.Name"
+                                  SelectedValue="{Binding MappingTableWidget.TableName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}"
                                   ItemsSource="{Binding Tables}" MinWidth="250">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
@@ -121,7 +121,7 @@
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
         <DockPanel Grid.Row="2">
             <ToolBar ToolBarTray.IsLocked="True" DockPanel.Dock="Top">
-                <Button Padding="2,4" ToolTip="実行" Command="{Binding ShowExecutionDialog}">
+                <Button Padding="2,4" ToolTip="実行" Command="{Binding ShowExecutionDialogCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconModern Kind="ControlPlay" />
                         <TextBlock Margin="3,0,0,0" FontSize="12" Text="実行" />

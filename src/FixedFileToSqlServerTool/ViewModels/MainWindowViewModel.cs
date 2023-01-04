@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -121,6 +122,12 @@ public partial class MainWindowViewModel
 
         var mappingTables = _mappingTableRepository.FindAll();
         this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
+    }
+
+    [RelayCommand]
+    private void Exit()
+    {
+        Application.Current.Shutdown();
     }
 
     [RelayCommand]
