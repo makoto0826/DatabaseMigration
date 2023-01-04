@@ -138,6 +138,7 @@
             <StackPanel DockPanel.Dock="Bottom">
                 <Separator />
                 <Label Content="テストデータ" />
+                <Separator />
                 <ae:TextEditor 
                             ShowLineNumbers="True"
                             FontSize="10pt"
@@ -161,6 +162,7 @@
             <StackPanel DockPanel.Dock="Bottom">
                 <Separator />
                 <Label Content="ログ"  />
+                <Separator />
                 <ae:TextEditor
                             FontSize="10pt"
                             VerticalScrollBarVisibility="Auto"
