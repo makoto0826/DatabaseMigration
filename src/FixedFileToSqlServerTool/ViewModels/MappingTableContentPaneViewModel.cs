@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using ICSharpCode.AvalonEdit.Document;
-using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -18,8 +17,6 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
     public ObservableCollection<TableWidgetViewModel> Tables { get; }
 
     public MappingTableWidgetViewModel MappingTableWidget { get; }
-
-    public ObjectId Id { get; }
 
     [ObservableProperty]
     private bool isSelected;
@@ -47,7 +44,6 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
         _migrationDataCreator = migrationDataCreator;
         _mappingTableRepository = mappingTableRepository;
 
-        this.Id = mappingTableWidget.Table.Id;
         this.MappingTableWidget = mappingTableWidget;
         this.Tables = new ObservableCollection<TableWidgetViewModel>(tables);
         this.TestDataDocument = new();

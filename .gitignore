@@ -135,3 +135,4 @@ _NCrunch*
 *.db
 
 test
+.vs

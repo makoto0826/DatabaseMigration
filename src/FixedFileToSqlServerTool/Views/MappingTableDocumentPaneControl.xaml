@@ -33,7 +33,10 @@
                     <Separator Margin="4,0" />
                     <StackPanel Orientation="Horizontal">
                         <Label Content="テーブル名" />
-                        <ComboBox x:Name="TableComboBox" ItemsSource="{Binding Tables}" MinWidth="250">
+                        <ComboBox x:Name="TableComboBox"
+                                  SelectedValuePath="Name"
+                                  SelectedValue="{Binding Table.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding Tables}" MinWidth="250">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Table.Name}" />

@@ -51,6 +51,7 @@ public partial class MainWindowViewModel
 
         WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
         WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
+        WeakReferenceMessenger.Default.Register<SavedMappingTableMessage>(this, this.HandleSavedMappingTable);
         WeakReferenceMessenger.Default.Register<ChangedIsSelectedPaneMessage>(this, this.HandleIsSelectedChanged);
     }
 
@@ -60,21 +61,21 @@ public partial class MainWindowViewModel
         {
             foreach (var scriptWidget in this.Scripts)
             {
-                scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.Id;
+                scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.ScriptWidget.Script.Id;
             }
         }
         else if (mesage.Value is MappingTableContentPaneViewModel mappingTableVm)
         {
             foreach (var mappingTableWidget in this.MappingTables)
             {
-                mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.Id;
+                mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.MappingTableWidget.Table.Id;
             }
         }
         else if (mesage.Value is TableContentPaneViewModel tableVm)
         {
             foreach (var tableWidget in this.Tables)
             {
-                tableWidget.IsSelected = tableWidget.Table.Id == tableVm.Id;
+                tableWidget.IsSelected = tableWidget.Table.Id == tableVm.TableWidget.Table.Id;
             }
         }
     }
@@ -176,22 +177,14 @@ public partial class MainWindowViewModel
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptContentPaneViewModel(
-            new(script),
-            _scriptRepository,
-            Ioc.Default.GetRequiredService<ScriptRunner>()
-        );
-
+        var vm = new ScriptContentPaneViewModel(new(script), _scriptRepository, Ioc.Default.GetRequiredService<ScriptRunner>());
         this.Documents.Add(vm);
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
     public void DeleteMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
-        var isOk = _dialogService.ShowMessageBox(this,
-            text: $"{mappingTableWidget.Table.Name}を削除しますか?",
-            title: "マッピングテーブル削除",
-            MessageBoxButton.YesNo);
+        var isOk = _dialogService.ShowMessageBox(this, text: $"{mappingTableWidget.Table.Name}を削除しますか?", title: "マッピングテーブル削除", MessageBoxButton.YesNo);
 
         if (!isOk ?? false)
         {
@@ -201,7 +194,7 @@ public partial class MainWindowViewModel
         _mappingTableRepository.Delete(mappingTableWidget.Table);
 
         this.MappingTables.Remove(mappingTableWidget);
-        var vm = this.Documents.OfType<MappingTableContentPaneViewModel>().FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
+        var vm = this.Documents.OfType<MappingTableContentPaneViewModel>().FirstOrDefault(x => x.MappingTableWidget.Table.Id == mappingTableWidget.Table.Id);
 
         if (vm is not null)
         {
@@ -212,10 +205,7 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckScript))]
     private void DeleteScript(ScriptWidgetViewModel scriptWidget)
     {
-        var isOk = _dialogService.ShowMessageBox(this,
-            text: $"{scriptWidget.Script.Name}を削除しますか?",
-            title: "スクリプト削除",
-            MessageBoxButton.YesNo);
+        var isOk = _dialogService.ShowMessageBox(this, text: $"{scriptWidget.Script.Name}を削除しますか?", title: "スクリプト削除", MessageBoxButton.YesNo);
 
         if (!isOk ?? false)
         {
@@ -225,7 +215,7 @@ public partial class MainWindowViewModel
         _scriptRepository.Delete(scriptWidget.Script);
 
         this.Scripts.Remove(scriptWidget);
-        var vm = this.Documents.OfType<ScriptContentPaneViewModel>().FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
+        var vm = this.Documents.OfType<ScriptContentPaneViewModel>().FirstOrDefault(x => x.ScriptWidget.Script.Id == scriptWidget.Script.Id);
 
         if (vm is not null)
         {
@@ -237,7 +227,7 @@ public partial class MainWindowViewModel
     private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
         var vmList = this.Documents.OfType<MappingTableContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.MappingTableWidget.Table.Id == mappingTableWidget.Table.Id);
 
         if (hitVm is null)
         {
@@ -260,7 +250,7 @@ public partial class MainWindowViewModel
     private void OpenTable(TableWidgetViewModel tableWidget)
     {
         var vmList = this.Documents.OfType<TableContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.Id == tableWidget.Table.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.TableWidget.Table.Id == tableWidget.Table.Id);
 
         if (hitVm is null)
         {
@@ -279,7 +269,7 @@ public partial class MainWindowViewModel
     private void OpenScript(ScriptWidgetViewModel scriptWidget)
     {
         var vmList = this.Documents.OfType<ScriptContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
+        var hitVm = vmList.FirstOrDefault(x => x.ScriptWidget.Script.Id == scriptWidget.Script.Id);
 
         if (hitVm is null)
         {

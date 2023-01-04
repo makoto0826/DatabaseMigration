@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using ICSharpCode.AvalonEdit.Document;
-using LiteDB;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -26,8 +25,6 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
     [ObservableProperty]
     private string testData;
 
-    public ObjectId Id { get; }
-
     public ScriptWidgetViewModel ScriptWidget { get; }
 
     private readonly ScriptRepository _scriptRepository;
@@ -43,8 +40,6 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
         _scriptRunner = scriptRunner;
 
         this.ScriptWidget = scriptWidget;
-        this.Id = scriptWidget.Script.Id;
-
         this.EditName = this.ScriptWidget.Script.Name;
         this.codeDocument = new TextDocument(scriptWidget.Script.Code);
         this.logDocument = new TextDocument();

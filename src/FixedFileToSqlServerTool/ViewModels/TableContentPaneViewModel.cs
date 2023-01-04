@@ -13,11 +13,8 @@ public partial class TableContentPaneViewModel : IPaneViewModel
 
     public TableWidgetViewModel TableWidget { get; }
 
-    public int Id { get; }
-
     public TableContentPaneViewModel(TableWidgetViewModel tableWidget)
     {
-        this.Id = tableWidget.Table.Id;
         this.TableWidget = tableWidget;
     }
 

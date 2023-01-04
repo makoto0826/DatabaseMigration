@@ -3,6 +3,10 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
+    <AssemblyName>FixedFileToSqlServerTool</AssemblyName>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Title>FixedFileToSqlServerTool</Title>
+    <Description>FixedFileToSqlServerTool</Description>
     <LangVersion>11</LangVersion>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
