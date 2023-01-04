@@ -32,7 +32,7 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
 
     public ObjectId Id { get; }
 
-    private readonly MappingTableDefinitionRepository _mappingTableDefinitionRepository;
+    private readonly MappingTableRepository _mappingTableRepository;
 
     private readonly MappingTableWidgetViewModel _mappingTableWidget;
 
@@ -44,11 +44,11 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
         MappingTableWidgetViewModel mappingTableWidget,
         ObservableCollection<ScriptWidgetViewModel> scripts,
         ObservableCollection<TableWidgetViewModel> tables,
-        MappingTableDefinitionRepository mappingTableDefinitionRepository
+        MappingTableRepository mappingTableRepository
     )
     {
         _mappingTableWidget = mappingTableWidget;
-        _mappingTableDefinitionRepository = mappingTableDefinitionRepository;
+        _mappingTableRepository = mappingTableRepository;
 
         this.Title = mappingTableWidget.Table.Name;
         this.Id = mappingTableWidget.Table.Id;
@@ -67,7 +67,7 @@ public partial class MappingTablePaneViewModel : IPaneViewModel
 
         };
 
-        _mappingTableDefinitionRepository.Save(newMappingTable);
+        _mappingTableRepository.Save(newMappingTable);
         WeakReferenceMessenger.Default.Send(new MappingTableDefinitionMessage(newMappingTable));
     }
 

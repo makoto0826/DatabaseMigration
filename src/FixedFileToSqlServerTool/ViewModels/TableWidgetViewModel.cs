@@ -10,9 +10,9 @@ public partial class TableWidgetViewModel
     private bool isSelected;
 
     [ObservableProperty]
-    private TableDefinition table;
+    private Table table;
 
-    public TableWidgetViewModel(TableDefinition table)
+    public TableWidgetViewModel(Table table)
     {
         this.table = table;
     }

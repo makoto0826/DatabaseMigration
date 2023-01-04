@@ -16,8 +16,8 @@ public class LayoutItemContainerStyleSelector : StyleSelector
         item switch
         {
             MappingTablePaneViewModel => MappingTableStyle,
-            ScriptPaneViewModel => ScriptStyle,
-            TablePaneViewModel => TableStyle,
+            ScriptContentPaneViewModel => ScriptStyle,
+            TableContentPaneViewModel => TableStyle,
             _ => base.SelectStyle(item, container)
         };
 }

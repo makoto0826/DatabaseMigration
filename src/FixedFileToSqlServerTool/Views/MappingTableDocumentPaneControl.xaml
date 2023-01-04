@@ -9,6 +9,9 @@
              mc:Ignorable="d" 
              x:Name="MappingTableControl"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="ScriptsSource" Source="{Binding Scripts}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="500*" />
@@ -47,15 +50,16 @@
                           SelectionMode="Single"
                           AutoGenerateColumns="False" >
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="自動生成" Binding="{Binding IsGeneration}"/>
+                        <DataGridCheckBoxColumn Header="生成" Binding="{Binding IsGeneration}"/>
                         <DataGridTextColumn Header="開始位置" Binding="{Binding StartPosition}"/>
                         <DataGridTextColumn Header="終了位置" Binding="{Binding EndPosition}"/>
                         <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Name}"/>
                         <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Type}"/>
                         <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding IsNullable}"/>
                         <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding MaxLength}"/>
-                        <DataGridComboBoxColumn Header="変換スクリプト" ItemsSource="{Binding ElementName=MappingTableControl,Path=DataContext.Scripts}" />
-                        <DataGridComboBoxColumn Header="生成スクリプト" ItemsSource="{Binding ElementName=MappingTableControl,Path=DataContext.Scripts}" />
+                        <DataGridComboBoxColumn Header="変換スクリプト"
+                            DisplayMemberPath="Script.Name" 
+                            ItemsSource="{Binding Source={StaticResource ScriptsSource}}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

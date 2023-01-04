@@ -1,4 +1,4 @@
-﻿<Window x:Class="FixedFileToSqlServerTool.MainWindow"
+<Window x:Class="FixedFileToSqlServerTool.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -57,7 +57,7 @@
                     </view:LayoutItemContainerStyleSelector.MappingTableStyle>
                     <view:LayoutItemContainerStyleSelector.TableStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
-                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="Title" Value="{Binding Model.TableWidget.Table.Name}" />
                             <Setter Property="IsSelected" Value="{Binding Model.IsSelected,Mode=TwoWay}" />
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>
@@ -65,7 +65,7 @@
 
                     <view:LayoutItemContainerStyleSelector.ScriptStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
-                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="Title" Value="{Binding Model.ScriptWidget.Script.Name}" />
                             <Setter Property="IsSelected" Value="{Binding Model.IsSelected,Mode=TwoWay}" />
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>

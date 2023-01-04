@@ -28,7 +28,7 @@ public class ScriptRunner
         });
     }
 
-    private class ScriptVariables
+    public class ScriptVariables
     {
         public string Value;
 

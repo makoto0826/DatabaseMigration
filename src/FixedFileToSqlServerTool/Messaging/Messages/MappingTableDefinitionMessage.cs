@@ -3,7 +3,7 @@ using FixedFileToSqlServerTool.Models;
 
 namespace FixedFileToSqlServerTool.Messaging.Messages;
 
-public class MappingTableDefinitionMessage : ValueChangedMessage<MappingTableDefinition>
+public class MappingTableDefinitionMessage : ValueChangedMessage<MappingTable>
 {
-    public MappingTableDefinitionMessage(MappingTableDefinition value) : base(value) { }
+    public MappingTableDefinitionMessage(MappingTable value) : base(value) { }
 }

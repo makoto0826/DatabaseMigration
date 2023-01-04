@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="FixedFileToSqlServerTool.Views.ScriptDocumentPaneControl"
+<UserControl x:Class="FixedFileToSqlServerTool.Views.ScriptDocumentPaneControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -25,7 +25,7 @@
                     </Button>
                     <Separator Margin="4,0" />
                     <Label Content="スクリプト名" />
-                    <TextBox Width="200" Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Width="200" Text="{Binding EditName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <Separator Margin="4,0"  />
                     <Button Padding="2,4" ToolTip="テスト" Command="{Binding TestCommand}">
                         <StackPanel Orientation="Horizontal">

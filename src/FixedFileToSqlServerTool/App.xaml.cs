@@ -1,6 +1,5 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FixedFileToSqlServerTool.Hanlders;
 using FixedFileToSqlServerTool.Models;
 using FixedFileToSqlServerTool.ViewModels;
 using HanumanInstitute.MvvmDialogs;
@@ -32,8 +31,8 @@ public partial class App : Application
                 .AddSingleton(x => new LiteDatabase(connectionString))
                 .AddSingleton(x => new ScriptRepository(x.GetRequiredService<LiteDatabase>()))
                 .AddSingleton(x => new DatabaseSettingRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new TableDefinitionRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new MappingTableDefinitionRepository(x.GetRequiredService<LiteDatabase>()))
+                .AddSingleton(x => new TableRepository(x.GetRequiredService<LiteDatabase>()))
+                .AddSingleton(x => new MappingTableRepository(x.GetRequiredService<LiteDatabase>()))
                 .AddSingleton(x => new ScriptRunner())
                 .AddTransient<DatabaseSettingDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()

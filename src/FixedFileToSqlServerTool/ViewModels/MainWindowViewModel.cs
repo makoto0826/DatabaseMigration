@@ -28,9 +28,9 @@ public partial class MainWindowViewModel
 
     private readonly DatabaseSettingRepository _databaseSettingRepository;
 
-    private readonly MappingTableDefinitionRepository _mappingTableDefinitionRepository;
+    private readonly MappingTableRepository _mappingTableRepository;
 
-    private readonly TableDefinitionRepository _tableDefinitionRepository;
+    private readonly TableRepository _tableRepository;
 
     private readonly ScriptRepository _scriptRepository;
 
@@ -38,14 +38,14 @@ public partial class MainWindowViewModel
 
     public MainWindowViewModel(
         DatabaseSettingRepository databaseSettingRepository,
-        MappingTableDefinitionRepository mappingTableDefinitionRepository,
-        TableDefinitionRepository tableDefinitionRepository,
+        MappingTableRepository mappingTableRepository,
+        TableRepository tableRepository,
         ScriptRepository scriptRepository,
         IDialogService dialogService)
     {
         _databaseSettingRepository = databaseSettingRepository;
-        _mappingTableDefinitionRepository = mappingTableDefinitionRepository;
-        _tableDefinitionRepository = tableDefinitionRepository;
+        _mappingTableRepository = mappingTableRepository;
+        _tableRepository = tableRepository;
         _scriptRepository = scriptRepository;
         _dialogService = dialogService;
 
@@ -56,7 +56,7 @@ public partial class MainWindowViewModel
 
     private void HandleIsSelectedChanged(object _, ChangedIsSelectedPaneMessage mesage)
     {
-        if (mesage.Value is ScriptPaneViewModel scriptVm)
+        if (mesage.Value is ScriptContentPaneViewModel scriptVm)
         {
             foreach (var scriptWidget in this.Scripts)
             {
@@ -70,7 +70,7 @@ public partial class MainWindowViewModel
                 mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.Id;
             }
         }
-        else if (mesage.Value is TablePaneViewModel tableVm)
+        else if (mesage.Value is TableContentPaneViewModel tableVm)
         {
             foreach (var tableWidget in this.Tables)
             {
@@ -98,10 +98,10 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void Loaded()
     {
-        var mappingTables = _mappingTableDefinitionRepository.FindAll();
+        var mappingTables = _mappingTableRepository.FindAll();
         this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x)));
 
-        var tables = _tableDefinitionRepository.FindAll();
+        var tables = _tableRepository.FindAll();
         this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
 
         var scripts = _scriptRepository.FindAll();
@@ -131,10 +131,10 @@ public partial class MainWindowViewModel
         try
         {
             await connection.OpenAsync();
-            var repository = new SqlServerMetadataRepository(connection);
+            var repository = new MetadataRepository(connection);
             var tables = await repository.GetTableDefinitionsAsync();
 
-            _tableDefinitionRepository.Save(tables);
+            _tableRepository.Save(tables);
             this.Tables.Clear();
             this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
         }
@@ -147,12 +147,12 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void AddMappingTable()
     {
-        var table = MappingTableDefinition.Create($"新規マッピングテーブル{mappingCount++}");
+        var table = MappingTable.Create($"新規マッピングテーブル{mappingCount++}");
         var vm = new MappingTablePaneViewModel(
             new(table),
             this.Scripts,
             this.Tables,
-            _mappingTableDefinitionRepository
+            _mappingTableRepository
         );
 
         this.Documents.Add(vm);
@@ -162,7 +162,7 @@ public partial class MainWindowViewModel
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptPaneViewModel(
+        var vm = new ScriptContentPaneViewModel(
             new(script),
             _scriptRepository,
             Ioc.Default.GetRequiredService<ScriptRunner>()
@@ -184,7 +184,7 @@ public partial class MainWindowViewModel
             return;
         }
 
-        _mappingTableDefinitionRepository.Delete(mappingTableWidget.Table);
+        _mappingTableRepository.Delete(mappingTableWidget.Table);
 
         this.MappingTables.Remove(mappingTableWidget);
         var vm = this.Documents.OfType<MappingTablePaneViewModel>().FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
@@ -211,7 +211,7 @@ public partial class MainWindowViewModel
         _scriptRepository.Delete(scriptWidget.Script);
 
         this.Scripts.Remove(scriptWidget);
-        var vm = this.Documents.OfType<ScriptPaneViewModel>().FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
+        var vm = this.Documents.OfType<ScriptContentPaneViewModel>().FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
 
         if (vm is not null)
         {
@@ -231,7 +231,7 @@ public partial class MainWindowViewModel
                 mappingTableWidget,
                 this.Scripts,
                 this.Tables,
-                _mappingTableDefinitionRepository
+                _mappingTableRepository
             )
             {
                 IsSelected = true
@@ -246,12 +246,12 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckTable))]
     private void OpenTable(TableWidgetViewModel tableWidget)
     {
-        var vmList = this.Documents.OfType<TablePaneViewModel>().ToList();
+        var vmList = this.Documents.OfType<TableContentPaneViewModel>().ToList();
         var hitVm = vmList.FirstOrDefault(x => x.Id == tableWidget.Table.Id);
 
         if (hitVm is null)
         {
-            this.Documents.Add(new TablePaneViewModel(tableWidget)
+            this.Documents.Add(new TableContentPaneViewModel(tableWidget)
             {
                 IsSelected = true
             });
@@ -265,12 +265,12 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckScript))]
     private void OpenScript(ScriptWidgetViewModel scriptWidget)
     {
-        var vmList = this.Documents.OfType<ScriptPaneViewModel>().ToList();
+        var vmList = this.Documents.OfType<ScriptContentPaneViewModel>().ToList();
         var hitVm = vmList.FirstOrDefault(x => x.Id == scriptWidget.Script.Id);
 
         if (hitVm is null)
         {
-            this.Documents.Add(new ScriptPaneViewModel(
+            this.Documents.Add(new ScriptContentPaneViewModel(
                 scriptWidget,
                 _scriptRepository,
                 Ioc.Default.GetRequiredService<ScriptRunner>())

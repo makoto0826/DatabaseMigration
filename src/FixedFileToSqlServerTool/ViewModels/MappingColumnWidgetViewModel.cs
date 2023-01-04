@@ -10,17 +10,27 @@ public partial class MappingColumnWidgetViewModel
     private bool isGeneration;
 
     [ObservableProperty]
-    public int startPosition;
+    private int? startPosition;
 
     [ObservableProperty]
-    public int endPosition;
+    private int? endPosition;
 
     [ObservableProperty]
-    public ColumnDefinition destination;
+    private Column destination;
 
     [ObservableProperty]
-    public Script? generationScript;
+    private Script? generationScript;
 
     [ObservableProperty]
-    public Script? convertScript;
+    private Script? convertScript;
+
+    public MappingColumnWidgetViewModel(MappingColumn mappingColumn)
+    {
+        this.IsGeneration = mappingColumn.IsGeneration;
+        this.StartPosition = mappingColumn.Source?.StartPosition;
+        this.EndPosition = mappingColumn.Source?.EndPosition;
+        this.Destination = mappingColumn.Destination;
+        this.GenerationScript = mappingColumn.GenerationScript;
+        this.ConvertScript = mappingColumn.ConvertScript;
+    }
 }

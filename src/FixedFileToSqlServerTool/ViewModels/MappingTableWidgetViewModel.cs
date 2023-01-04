@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FixedFileToSqlServerTool.Models;
 
@@ -10,10 +11,16 @@ public partial class MappingTableWidgetViewModel
     private bool isSelected;
 
     [ObservableProperty]
-    private MappingTableDefinition table;
+    private MappingTable table;
 
-    public MappingTableWidgetViewModel(MappingTableDefinition table)
+    public ObservableCollection<MappingColumnWidgetViewModel> Columns { get; }
+
+    public MappingTableWidgetViewModel(MappingTable table)
     {
         this.table = table;
+        this.Columns = new ObservableCollection<MappingColumnWidgetViewModel>(
+            table.Columns
+                .Select(x => new MappingColumnWidgetViewModel(x))
+                .ToList());
     }
 }

@@ -16,8 +16,8 @@ public class LayoutItemTemplateSelector : DataTemplateSelector
         item switch
         {
             MappingTablePaneViewModel => MappingTableTemplate,
-            TablePaneViewModel => TableTemplate,
-            ScriptPaneViewModel => ScriptTemplate,
+            TableContentPaneViewModel => TableTemplate,
+            ScriptContentPaneViewModel => ScriptTemplate,
             _ => base.SelectTemplate(item, container)
         };
 }
