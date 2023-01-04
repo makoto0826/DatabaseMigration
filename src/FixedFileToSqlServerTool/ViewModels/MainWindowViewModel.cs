@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using MessageBoxButton = HanumanInstitute.MvvmDialogs.FrameworkDialogs.MessageBoxButton;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 

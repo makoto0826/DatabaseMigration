@@ -10,22 +10,16 @@ namespace FixedFileToSqlServerTool.ViewModels;
 [INotifyPropertyChanged]
 public partial class ScriptContentPaneViewModel : IPaneViewModel
 {
-    [ObservableProperty]
-    private string editName;
+    public ScriptWidgetViewModel ScriptWidget { get; }
 
     [ObservableProperty]
     private bool isSelected;
-
-    [ObservableProperty]
-    private TextDocument codeDocument;
 
     [ObservableProperty]
     private TextDocument logDocument;
 
     [ObservableProperty]
     private string testData;
-
-    public ScriptWidgetViewModel ScriptWidget { get; }
 
     private readonly ScriptRepository _scriptRepository;
 
@@ -40,8 +34,6 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
         _scriptRunner = scriptRunner;
 
         this.ScriptWidget = scriptWidget;
-        this.EditName = this.ScriptWidget.Script.Name;
-        this.codeDocument = new TextDocument(scriptWidget.Script.Code);
         this.logDocument = new TextDocument();
     }
 
@@ -53,13 +45,7 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
     [RelayCommand]
     private void Save()
     {
-        var newScript = this.ScriptWidget.Script with
-        {
-            Name = this.EditName,
-            Code = this.CodeDocument.Text,
-            UpdatedAt = DateTime.Now
-        };
-
+        var newScript = this.ScriptWidget.ToScript();
         _scriptRepository.Save(newScript);
 
         WeakReferenceMessenger.Default.Send(new SavedScriptMessage(newScript));
@@ -69,7 +55,7 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
     private async Task Test()
     {
         this.LogDocument = new TextDocument("実行中...しばらくお待ちください");
-        var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(this.CodeDocument.Text, this.testData));
+        var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(this.ScriptWidget.CodeDocument.Text, this.testData));
 
         if (result.IsSucceeded)
         {

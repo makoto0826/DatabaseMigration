@@ -25,7 +25,7 @@
                     </Button>
                     <Separator Margin="4,0" />
                     <Label Content="スクリプト名" />
-                    <TextBox Width="200" Text="{Binding EditName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Width="200" Text="{Binding ScriptWidget.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <Separator Margin="4,0"  />
                     <Button Padding="2,4" ToolTip="テスト" Command="{Binding TestCommand}">
                         <StackPanel Orientation="Horizontal">
@@ -46,7 +46,7 @@
                 FontSize="10pt"
                 VerticalScrollBarVisibility="Auto"
                 HorizontalScrollBarVisibility="Auto"
-                Document="{Binding CodeDocument,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                Document="{Binding ScriptWidget.CodeDocument,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
              />
         </StackPanel>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />

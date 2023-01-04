@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -9,10 +10,26 @@ public partial class ScriptWidgetViewModel
     private bool isSelected;
 
     [ObservableProperty]
+    private string name;
+
+    [ObservableProperty]
+    private TextDocument codeDocument;
+
+    [ObservableProperty]
     private Models.Script script;
 
     public ScriptWidgetViewModel(Models.Script script)
     {
         this.script = script;
+        this.Name = this.Script.Name;
+        this.CodeDocument = new(this.Script.Code);
     }
+
+    public Models.Script ToScript() =>
+        this.Script with
+        {
+            Name = this.Name,
+            Code = this.CodeDocument.Text,
+            UpdatedAt = DateTime.Now
+        };
 }
