@@ -15,7 +15,7 @@ public class LayoutItemContainerStyleSelector : StyleSelector
     public override Style SelectStyle(object item, DependencyObject container) =>
         item switch
         {
-            MappingTablePaneViewModel => MappingTableStyle,
+            MappingTableContentPaneViewModel => MappingTableStyle,
             ScriptContentPaneViewModel => ScriptStyle,
             TableContentPaneViewModel => TableStyle,
             _ => base.SelectStyle(item, container)

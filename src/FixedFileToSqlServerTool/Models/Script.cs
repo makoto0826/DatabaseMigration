@@ -13,9 +13,9 @@ return Value;";
 
     public required ObjectId Id { get; init; }
 
-    public string Name { get; init; } = String.Empty;
+    public required string Name { get; init; } = String.Empty;
 
-    public string Code { get; init; } = String.Empty;
+    public required string Code { get; init; } = String.Empty;
 
     public DateTime UpdatedAt { get; init; }
 

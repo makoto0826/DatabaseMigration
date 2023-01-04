@@ -10,6 +10,8 @@ public record class MappingTable
 
     public required string Name { get; init; }
 
+    public string? TableName { get; init; }
+
     public required List<MappingColumn> Columns { get; init; }
 
     public static MappingTable Create(string name) =>

@@ -50,7 +50,7 @@
                 <view:LayoutItemContainerStyleSelector>
                     <view:LayoutItemContainerStyleSelector.MappingTableStyle>
                         <Style TargetType="{x:Type ad:LayoutItem}">
-                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="Title" Value="{Binding Model.MappingTableWidget.Table.Name}" />
                             <Setter Property="IsSelected" Value="{Binding Model.IsSelected,Mode=TwoWay}" />
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         </Style>

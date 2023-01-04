@@ -9,9 +9,6 @@
              mc:Ignorable="d" 
              x:Name="MappingTableControl"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <CollectionViewSource x:Key="ScriptsSource" Source="{Binding Scripts}" />
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="500*" />
@@ -30,7 +27,7 @@
                     </Button>
                     <Separator Margin="4,0" />
                     <Label Content="マッピングテーブル名" />
-                    <TextBox Width="200" Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Width="200" Text="{Binding EditName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                 </ToolBar>
             </StackPanel>
             <Separator />
@@ -43,23 +40,75 @@
                                 <TextBlock Text="{Binding Table.Name}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding TableSelectionChangedCommand}" CommandParameter="{Binding ElementName=TableComboBox, Path=SelectedItem}"  />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </ComboBox>
                 </StackPanel>
                 <Separator />
-                <DataGrid ItemsSource="{Binding ElementName=TableComboBox,Path=SelectedValue.Table.Columns}"
+                <DataGrid ItemsSource="{Binding MappingTableWidget.Columns}"
                           SelectionMode="Single"
-                          AutoGenerateColumns="False" >
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="生成" Binding="{Binding IsGeneration}"/>
-                        <DataGridTextColumn Header="開始位置" Binding="{Binding StartPosition}"/>
-                        <DataGridTextColumn Header="終了位置" Binding="{Binding EndPosition}"/>
-                        <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Type}"/>
-                        <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding IsNullable}"/>
-                        <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding MaxLength}"/>
-                        <DataGridComboBoxColumn Header="変換スクリプト"
-                            DisplayMemberPath="Script.Name" 
-                            ItemsSource="{Binding Source={StaticResource ScriptsSource}}" />
+                        <DataGridTemplateColumn Header="自動生成" x:Name="GenerationColumn" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <CheckBox IsChecked="{Binding IsGeneration,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="開始位置">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding StartPosition,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}" InputMethod.IsInputMethodEnabled="False"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="終了位置">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding EndPosition,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}" InputMethod.IsInputMethodEnabled="False" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Destination.Name}"/>
+                        <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Destination.Type}"/>
+                        <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding Destination.MaxLength}"/>
+                        <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding Destination.IsNullable}"/>
+
+                        <DataGridTemplateColumn Header="変換スクリプト" Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox SelectedValue="{Binding ConvertScript,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ConvertScripts}" >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="生成スクリプト" Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox SelectedValue="{Binding GenerationScript,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding GenerationScripts}" >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
@@ -81,14 +130,6 @@
                             <TextBlock Margin="3,0,0,0" FontSize="12" Text="テスト実行" />
                         </StackPanel>
                     </Button>
-                    <Separator Margin="4,0"  />
-                    <Button Padding="2,4" ToolTip="開く" Command="{Binding OpenCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="開く" />
-                        </StackPanel>
-                    </Button>
-                    <Label Content="ファイルパス" />
-                    <TextBox Width="300" IsReadOnly="True" Text="{Binding FilePath,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
                 </ToolBar>
                 <Separator />
                 <DockPanel>

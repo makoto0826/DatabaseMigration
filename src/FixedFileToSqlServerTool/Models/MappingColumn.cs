@@ -1,5 +1,3 @@
-using LiteDB;
-
 namespace FixedFileToSqlServerTool.Models;
 
 public record class MappingColumn
@@ -13,4 +11,10 @@ public record class MappingColumn
     public Script? GenerationScript { get; init; }
 
     public Script? ConvertScript { get; init; }
+
+    public static MappingColumn Create(Column column) =>
+        new MappingColumn
+        {
+            Destination = column with { }
+        };
 }

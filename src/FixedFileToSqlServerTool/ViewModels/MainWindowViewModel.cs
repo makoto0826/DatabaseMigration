@@ -63,7 +63,7 @@ public partial class MainWindowViewModel
                 scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.Id;
             }
         }
-        else if (mesage.Value is MappingTablePaneViewModel mappingTableVm)
+        else if (mesage.Value is MappingTableContentPaneViewModel mappingTableVm)
         {
             foreach (var mappingTableWidget in this.MappingTables)
             {
@@ -95,11 +95,25 @@ public partial class MainWindowViewModel
         }
     }
 
+    private void HandleSavedMappingTable(object _, SavedMappingTableMessage message)
+    {
+        var storedMappingTableWidget = this.MappingTables.FirstOrDefault(x => x.Table.Id == message.Value.Id);
+
+        if (storedMappingTableWidget is null)
+        {
+            this.MappingTables.Add(new(message.Value, this.Scripts.Select(x => x.Script)));
+        }
+        else
+        {
+            storedMappingTableWidget.Table = message.Value;
+        }
+    }
+
     [RelayCommand]
     private void Loaded()
     {
         var mappingTables = _mappingTableRepository.FindAll();
-        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x)));
+        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
 
         var tables = _tableRepository.FindAll();
         this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
@@ -148,9 +162,8 @@ public partial class MainWindowViewModel
     private void AddMappingTable()
     {
         var table = MappingTable.Create($"新規マッピングテーブル{mappingCount++}");
-        var vm = new MappingTablePaneViewModel(
-            new(table),
-            this.Scripts,
+        var vm = new MappingTableContentPaneViewModel(
+            new(table, this.Scripts.Select(x => x.Script)),
             this.Tables,
             _mappingTableRepository
         );
@@ -187,7 +200,7 @@ public partial class MainWindowViewModel
         _mappingTableRepository.Delete(mappingTableWidget.Table);
 
         this.MappingTables.Remove(mappingTableWidget);
-        var vm = this.Documents.OfType<MappingTablePaneViewModel>().FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
+        var vm = this.Documents.OfType<MappingTableContentPaneViewModel>().FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
 
         if (vm is not null)
         {
@@ -222,17 +235,12 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
     private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
     {
-        var vmList = this.Documents.OfType<MappingTablePaneViewModel>().ToList();
+        var vmList = this.Documents.OfType<MappingTableContentPaneViewModel>().ToList();
         var hitVm = vmList.FirstOrDefault(x => x.Id == mappingTableWidget.Table.Id);
 
         if (hitVm is null)
         {
-            this.Documents.Add(new MappingTablePaneViewModel(
-                mappingTableWidget,
-                this.Scripts,
-                this.Tables,
-                _mappingTableRepository
-            )
+            this.Documents.Add(new MappingTableContentPaneViewModel(mappingTableWidget, this.Tables, _mappingTableRepository)
             {
                 IsSelected = true
             });

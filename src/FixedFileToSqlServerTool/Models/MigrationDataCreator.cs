@@ -17,7 +17,7 @@ public class MigrationDataCreator
     {
         var dataTable = new DataTable()
         {
-            TableName = table.Name
+            TableName = table.TableName
         };
 
         foreach (var column in table.Columns)
