@@ -4,7 +4,7 @@ namespace FixedFileToSqlServerTool.Models;
 
 public class DatabaseSettingRepository
 {
-    private const string CollectionName = "databaseSettings";
+    private const string CollectionName = "DatabaseSettings";
 
     private readonly LiteDatabase _database;
 

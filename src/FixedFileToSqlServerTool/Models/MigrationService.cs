@@ -17,7 +17,7 @@ public class MigrationService
         _scriptRunner = scriptRunner;
     }
 
-    public async Task HandleAsync(MigrationContext context)
+    public async Task MigrateAsync(MigrationContext context)
     {
         var dataTable = CreateTable(context);
         await SetDataAsync(dataTable, context);
