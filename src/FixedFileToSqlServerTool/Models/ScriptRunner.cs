@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
@@ -5,14 +6,20 @@ namespace FixedFileToSqlServerTool.Models;
 
 public class ScriptRunner
 {
+    private readonly ConcurrentDictionary<string, Script<object>> _caches = new();
+
     public Task<ScriptRunnerResult> RunAsync(ScriptRunnerContext context)
     {
         return Task.Run(async () =>
         {
             try
             {
-                var script = CSharpScript.Create<object>(context.Code, globalsType: typeof(ScriptVariables));
-                script.Compile();
+                if (!_caches.TryGetValue(context.Code, out var script))
+                {
+                    script = CSharpScript.Create<object>(context.Code, globalsType: typeof(ScriptVariables));
+                    script.Compile();
+                    _caches.TryAdd(context.Code, script);
+                }
 
                 var state = await script.RunAsync(new ScriptVariables(context.Variable));
                 return new ScriptRunnerResult(true, state.ReturnValue, null);

@@ -13,6 +13,21 @@ public class MigrationDataCreator
         _scriptRunner = scriptRunner;
     }
 
+    public DataTable CreateEmpty(MappingTable table)
+    {
+        var dataTable = new DataTable()
+        {
+            TableName = table.TableName
+        };
+
+        foreach (var column in table.Columns)
+        {
+            dataTable.Columns.Add(new DataColumn(column.Destination.Name));
+        }
+
+        return dataTable;
+    }
+
     public async Task<DataTable> CreateAsync(MappingTable table, Stream sourceStream)
     {
         var dataTable = new DataTable()
@@ -30,10 +45,10 @@ public class MigrationDataCreator
 
         while ((line = reader.ReadLine()) != null)
         {
+            var row = dataTable.NewRow();
+
             foreach (var column in table.Columns)
             {
-                var row = dataTable.NewRow();
-
                 if (column.IsGeneration)
                 {
                     if (column.GenerationScript is null)
@@ -59,7 +74,7 @@ public class MigrationDataCreator
 
                     var value = line[column.Source.StartPosition..column.Source.EndPosition];
 
-                    if (column.GenerationScript is not null)
+                    if (column.ConvertScript is not null)
                     {
                         var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(column.ConvertScript.Code, value));
 
@@ -74,11 +89,10 @@ public class MigrationDataCreator
                     {
                         row[column.Destination.Name] = value;
                     }
-
                 }
-
-                dataTable.Rows.Add(row);
             }
+
+            dataTable.Rows.Add(row);
         }
 
         return dataTable;

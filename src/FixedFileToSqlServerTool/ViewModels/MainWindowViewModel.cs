@@ -112,14 +112,14 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void Loaded()
     {
-        var mappingTables = _mappingTableRepository.FindAll();
-        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
-
         var tables = _tableRepository.FindAll();
         this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
 
         var scripts = _scriptRepository.FindAll();
         this.Scripts.AddRange(scripts.Select(x => new ScriptWidgetViewModel(x)));
+
+        var mappingTables = _mappingTableRepository.FindAll();
+        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
     }
 
     [RelayCommand]
@@ -165,6 +165,7 @@ public partial class MainWindowViewModel
         var vm = new MappingTableContentPaneViewModel(
             new(table, this.Scripts.Select(x => x.Script)),
             this.Tables,
+            Ioc.Default.GetRequiredService<MigrationDataCreator>(),
             _mappingTableRepository
         );
 
@@ -240,7 +241,11 @@ public partial class MainWindowViewModel
 
         if (hitVm is null)
         {
-            this.Documents.Add(new MappingTableContentPaneViewModel(mappingTableWidget, this.Tables, _mappingTableRepository)
+            this.Documents.Add(new MappingTableContentPaneViewModel(
+                mappingTableWidget,
+                this.Tables,
+                 Ioc.Default.GetRequiredService<MigrationDataCreator>(),
+                _mappingTableRepository)
             {
                 IsSelected = true
             });

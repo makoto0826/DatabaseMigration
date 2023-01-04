@@ -16,6 +16,9 @@ public partial class MappingTableWidgetViewModel
     private string name;
 
     [ObservableProperty]
+    private string? tableName;
+
+    [ObservableProperty]
     private MappingTable table;
 
     private readonly IEnumerable<Script> _scripts;
@@ -23,8 +26,10 @@ public partial class MappingTableWidgetViewModel
     public MappingTableWidgetViewModel(MappingTable table, IEnumerable<Script> scripts)
     {
         _scripts = scripts;
-        this.name = table.Name;
-        this.table = table;
+
+        this.Name = table.Name;
+        this.TableName = table.TableName;
+        this.Table = table;
         this.Columns = new ObservableCollection<MappingColumnWidgetViewModel>(
             table.Columns
                 .Select(x => new MappingColumnWidgetViewModel(x, _scripts))
@@ -33,7 +38,7 @@ public partial class MappingTableWidgetViewModel
 
     public void ChangeTable(Table table)
     {
-        this.Name = table.Name;
+        this.TableName = table.Name;
         this.Columns.Clear();
 
         this.Columns.AddRange(
@@ -42,4 +47,24 @@ public partial class MappingTableWidgetViewModel
             )
         );
     }
+
+    public MappingTable ToMappingTable() =>
+        this.Table with
+        {
+            Name = this.Name,
+            TableName = this.TableName,
+            Columns = this.Columns.Select(x => new MappingColumn
+            {
+                IsGeneration = x.IsGeneration,
+                Source = x.StartPosition.HasValue && x.EndPosition.HasValue ? new FixedColumn
+                {
+                    StartPosition = x.StartPosition.Value,
+                    EndPosition = x.EndPosition.Value
+                } : null,
+                Destination = x.Destination with { },
+                GenerationScript = x.GenerationScript,
+                ConvertScript = x.ConvertScript
+            })
+            .ToList()
+        };
 }

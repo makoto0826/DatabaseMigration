@@ -11,12 +11,14 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="500*" />
+            <RowDefinition Height="400*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="300*" />
+            <RowDefinition Height="200*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
+        <DockPanel Grid.Row="0">
             <StackPanel DockPanel.Dock="Top" Background="White">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Button Padding="2,4" ToolTip="保存" Command="{Binding SaveCommand}">
@@ -27,27 +29,27 @@
                     </Button>
                     <Separator Margin="4,0" />
                     <Label Content="マッピングテーブル名" />
-                    <TextBox Width="200" Text="{Binding EditName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Width="200" Text="{Binding MappingTableWidget.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <Separator Margin="4,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="テーブル名" />
+                        <ComboBox x:Name="TableComboBox" ItemsSource="{Binding Tables}" MinWidth="250">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Table.Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding TableSelectionChangedCommand}" CommandParameter="{Binding ElementName=TableComboBox, Path=SelectedItem}"  />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </StackPanel>
                 </ToolBar>
             </StackPanel>
             <Separator />
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="テーブル名" />
-                    <ComboBox x:Name="TableComboBox" ItemsSource="{Binding Tables}" MinWidth="250">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Table.Name}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding TableSelectionChangedCommand}" CommandParameter="{Binding ElementName=TableComboBox, Path=SelectedItem}"  />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                </StackPanel>
-                <Separator />
+            <StackPanel DockPanel.Dock="Bottom">
                 <DataGrid ItemsSource="{Binding MappingTableWidget.Columns}"
                           SelectionMode="Single"
                           AutoGenerateColumns="False"
@@ -112,39 +114,56 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
-        </StackPanel>
+        </DockPanel>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
-        <StackPanel Grid.Row="2">
-            <StackPanel DockPanel.Dock="Top" Background="White">
-                <ToolBar ToolBarTray.IsLocked="True">
-                    <Button Padding="2,4" ToolTip="実行" Command="{Binding ExecuteCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconModern Kind="ControlPlay" />
-                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="実行" />
-                        </StackPanel>
-                    </Button>
-                    <Separator Margin="4,0"  />
-                    <Button Padding="2,4" ToolTip="テスト実行" Command="{Binding TestCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconModern Kind="ControlPlay" />
-                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="テスト実行" />
-                        </StackPanel>
-                    </Button>
-                </ToolBar>
-                <Separator />
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top">
-                        <Label Content="テストデータ" DockPanel.Dock="Top" />
-                        <Separator />
+        <DockPanel Grid.Row="2">
+            <ToolBar ToolBarTray.IsLocked="True" DockPanel.Dock="Top">
+                <Button Padding="2,4" ToolTip="実行" Command="{Binding ShowExecutionDialog}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconModern Kind="ControlPlay" />
+                        <TextBlock Margin="3,0,0,0" FontSize="12" Text="実行" />
                     </StackPanel>
-                    <ae:TextEditor DockPanel.Dock="Bottom"
-                        FontSize="10pt"
-                        VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto"
-                        Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-                </DockPanel>
+                </Button>
+                <Separator Margin="4,0"  />
+                <Button Padding="2,4" ToolTip="テスト実行" Command="{Binding TestCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconModern Kind="ControlPlay" />
+                        <TextBlock Margin="3,0,0,0" FontSize="12" Text="テスト実行" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+            <StackPanel DockPanel.Dock="Bottom">
+                <Separator />
+                <Label Content="テストデータ" />
+                <ae:TextEditor 
+                            ShowLineNumbers="True"
+                            FontSize="10pt"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Document="{Binding TestDataDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <Separator />
-        </StackPanel>
+        </DockPanel>
+        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" Height="5" />
+        <DockPanel Grid.Row="4" >
+            <StackPanel DockPanel.Dock="Top">
+                <Separator />
+                <Label Content="テスト結果"  />
+                <DataGrid
+                            ItemsSource="{Binding TestDataTable}"
+                            SelectionMode="Single"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            CanUserReorderColumns="False" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom">
+                <Separator />
+                <Label Content="ログ"  />
+                <ae:TextEditor
+                            FontSize="10pt"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </UserControl>
