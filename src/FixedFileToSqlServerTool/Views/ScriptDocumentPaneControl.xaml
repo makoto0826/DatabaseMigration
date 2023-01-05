@@ -14,8 +14,8 @@
             <RowDefinition Height="100*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <StackPanel DockPanel.Dock="Top" Background="White">
+        <DockPanel Grid.Row="0">
+            <StackPanel Background="White" DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Button Padding="2,4" ToolTip="保存" Command="{Binding SaveCommand}">
                         <StackPanel Orientation="Horizontal">
@@ -38,8 +38,9 @@
                     <TextBox Width="200" Text="{Binding TestData,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                 </ToolBar>
             </StackPanel>
-            <Separator />
-            <ae:TextEditor
+            <Separator DockPanel.Dock="Top" />
+            <DockPanel DockPanel.Dock="Bottom">
+                <ae:TextEditor
                 DockPanel.Dock="Bottom"
                 SyntaxHighlighting="C#"
                 ShowLineNumbers="True"
@@ -48,14 +49,16 @@
                 HorizontalScrollBarVisibility="Auto"
                 Document="{Binding ScriptWidget.CodeDocument,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
              />
-        </StackPanel>
+            </DockPanel>
+        </DockPanel>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
         <DockPanel Grid.Row="2">
             <StackPanel DockPanel.Dock="Top">
-                <Label Content="出力情報" DockPanel.Dock="Top" />
+                <Label Content="出力" DockPanel.Dock="Top" />
                 <Separator />
             </StackPanel>
             <ae:TextEditor DockPanel.Dock="Bottom"
+                IsReadOnly="True"
                 FontSize="10pt"
                 VerticalScrollBarVisibility="Auto"
                 HorizontalScrollBarVisibility="Auto"
