@@ -49,7 +49,6 @@ ORDER BY
                         IsNullable = row.is_nullable
                     })
                     .GroupBy(x => x.Id)
-                    .Where(x => x.Count() != 1)
                     .Select(x => x.First())
                     .ToList();
 
