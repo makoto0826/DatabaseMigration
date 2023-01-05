@@ -113,14 +113,9 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void Loaded()
     {
-        var tables = _tableRepository.FindAll();
-        this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
-
-        var scripts = _scriptRepository.FindAll();
-        this.Scripts.AddRange(scripts.Select(x => new ScriptWidgetViewModel(x)));
-
-        var mappingTables = _mappingTableRepository.FindAll();
-        this.MappingTables.AddRange(mappingTables.Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
+        this.Tables.AddRange(_tableRepository.FindAll().Select(x => new TableWidgetViewModel(x)));
+        this.Scripts.AddRange(_scriptRepository.FindAll().Select(x => new ScriptWidgetViewModel(x)));
+        this.MappingTables.AddRange(_mappingTableRepository.FindAll().Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
     }
 
     [RelayCommand]

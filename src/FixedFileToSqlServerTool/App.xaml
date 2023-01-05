@@ -9,6 +9,10 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="MenuItem">
+                <Setter Property="FontSize" Value="10pt" />
+                <Setter Property="Padding" Value="2pt" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
