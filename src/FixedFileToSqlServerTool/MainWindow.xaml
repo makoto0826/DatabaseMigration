@@ -76,7 +76,7 @@
             <ad:LayoutRoot>
                 <ad:LayoutPanel CanDock="False" Orientation="Horizontal">
                     <ad:LayoutAnchorablePane DockWidth="200" x:Name="ListPane">
-                        <ad:LayoutAnchorable CanClose="False" CanMove="False" Title="マッピングテーブル">
+                        <ad:LayoutAnchorable CanClose="False" CanMove="False" CanHide="False" Title="マッピングテーブル">
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top" Background="WhiteSmoke">
                                     <ToolBar ToolBarTray.IsLocked="True">
@@ -130,7 +130,7 @@
                                 </TreeView>
                             </DockPanel>
                         </ad:LayoutAnchorable>
-                        <ad:LayoutAnchorable CanClose="False" CanMove="False" Title="テーブル">
+                        <ad:LayoutAnchorable CanClose="False" CanMove="False" CanHide="False" Title="テーブル">
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top" Background="WhiteSmoke">
                                     <ToolBar ToolBarTray.IsLocked="True">
@@ -179,7 +179,7 @@
                                 </TreeView>
                             </DockPanel>
                         </ad:LayoutAnchorable>
-                        <ad:LayoutAnchorable CanClose="False" CanMove="False" Title="スクリプト">
+                        <ad:LayoutAnchorable CanClose="False" CanMove="False" CanHide="False" Title="スクリプト">
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top" Background="WhiteSmoke">
                                     <ToolBar ToolBarTray.IsLocked="True">

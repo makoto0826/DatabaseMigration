@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="200*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="100*" />
+            <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
