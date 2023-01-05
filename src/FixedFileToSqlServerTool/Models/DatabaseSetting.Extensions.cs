@@ -8,9 +8,9 @@ public static class DatabaseSettingExtensions
     {
         var builder = new SqlConnectionStringBuilder();
         builder.Add("Server", $"{setting.Server},{setting.Port ?? 1433}");
-        builder.Add("User ID", setting.UserId);
-        builder.Add("Password", setting.Password);
-        builder.Add("Database", setting.Database);
+        builder.Add("User ID", setting.UserId ?? "");
+        builder.Add("Password", setting.Password ?? "");
+        builder.Add("Database", setting.Database ?? "");
         builder.Encrypt = false;
 
         return new SqlConnection(builder.ToString());

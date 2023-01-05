@@ -30,15 +30,7 @@ public class MigrationDataCreator
 
     public async Task<DataTable> CreateAsync(MappingTable table, Stream sourceStream)
     {
-        var dataTable = new DataTable()
-        {
-            TableName = table.TableName
-        };
-
-        foreach (var column in table.Columns)
-        {
-            dataTable.Columns.Add(new DataColumn(column.Destination.Name));
-        }
+        var dataTable = CreateEmpty(table);
 
         string? line = null;
         using var reader = new StreamReader(sourceStream, Encoding.GetEncoding(table.Encoding));

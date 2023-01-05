@@ -8,6 +8,8 @@ public class ScriptRunner
 {
     private readonly ConcurrentDictionary<string, Script<object>> _caches = new();
 
+    public void CacheClear() => _caches.Clear();
+
     public Task<ScriptRunnerResult> RunAsync(ScriptRunnerContext context)
     {
         return Task.Run(async () =>

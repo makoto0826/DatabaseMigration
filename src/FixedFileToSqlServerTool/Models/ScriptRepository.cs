@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiteDB;
 
 namespace FixedFileToSqlServerTool.Models;
 
 public class ScriptRepository
 {
-    private const string CollectionName = "scripts";
+    private const string CollectionName = "Scripts";
 
     private readonly LiteDatabase _database;
 
