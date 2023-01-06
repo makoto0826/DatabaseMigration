@@ -4,11 +4,11 @@ using System.Text;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public class MigrationDataCreator
+public class DataTableCreator
 {
     private readonly ScriptRunner _scriptRunner;
 
-    public MigrationDataCreator(ScriptRunner scriptRunner)
+    public DataTableCreator(ScriptRunner scriptRunner)
     {
         _scriptRunner = scriptRunner;
     }

@@ -5,23 +5,17 @@ namespace FixedFileToSqlServerTool.Models;
 
 public class MigrationService
 {
-    private readonly SqlConnection _connection;
-
-    public MigrationService(SqlConnection connection)
+    public async Task HanldeAsync(DataTable dataTable, DatabaseSetting databaseSetting)
     {
-        _connection = connection;
-    }
-
-    public async Task MigrateAsync(DataTable dataTable)
-    {
+        var connection = databaseSetting.CreateConnection();
         SqlTransaction? transaction = null;
 
         try
         {
-            await _connection.OpenAsync();
-            transaction = await _connection.BeginTransactionAsync() as SqlTransaction;
+            await connection.OpenAsync();
+            transaction = await connection.BeginTransactionAsync() as SqlTransaction;
 
-            using var bulkCopy = new SqlBulkCopy(_connection, SqlBulkCopyOptions.Default, transaction);
+            using var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, transaction);
             bulkCopy.DestinationTableName = dataTable.TableName;
 
             await bulkCopy.WriteToServerAsync(dataTable);

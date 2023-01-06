@@ -7,7 +7,7 @@ namespace FixedFileToSqlServerTool.ViewModels;
 [INotifyPropertyChanged]
 public partial class MappingTableWidgetViewModel
 {
-    public ObservableCollection<MappingColumnWidgetViewModel> Columns { get; }
+    public ObservableCollection<MappingColumnWidgetViewModel> Columns { get; private set; }
 
     [ObservableProperty]
     private bool isSelected;
@@ -46,6 +46,17 @@ public partial class MappingTableWidgetViewModel
                 new MappingColumnWidgetViewModel(MappingColumn.Create(x), _scripts)
             )
         );
+    }
+
+    public void Renew(MappingTable table)
+    {
+        this.Name = table.Name;
+        this.TableName = table.TableName;
+        this.Table = table;
+        this.Columns = new ObservableCollection<MappingColumnWidgetViewModel>(
+            table.Columns
+                .Select(x => new MappingColumnWidgetViewModel(x, _scripts))
+                .ToList());
     }
 
     public MappingTable ToMappingTable() =>

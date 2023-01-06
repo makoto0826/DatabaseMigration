@@ -90,10 +90,6 @@ public partial class MainWindowViewModel
         {
             this.Scripts.Add(new(message.Value));
         }
-        else
-        {
-            storedScirptWidget.Script = message.Value;
-        }
     }
 
     private void HandleSavedMappingTable(object _, SavedMappingTableMessage message)
@@ -103,10 +99,6 @@ public partial class MainWindowViewModel
         if (storedMappingTableWidget is null)
         {
             this.MappingTables.Add(new(message.Value, this.Scripts.Select(x => x.Script)));
-        }
-        else
-        {
-            storedMappingTableWidget.Table = message.Value;
         }
     }
 
@@ -181,7 +173,7 @@ public partial class MainWindowViewModel
         var vm = new MappingTableContentPaneViewModel(
             new(table, this.Scripts.Select(x => x.Script)),
             this.Tables,
-            Ioc.Default.GetRequiredService<MigrationDataCreator>(),
+            Ioc.Default.GetRequiredService<DataTableCreator>(),
             _mappingTableRepository
         );
 
@@ -249,7 +241,7 @@ public partial class MainWindowViewModel
             this.Documents.Add(new MappingTableContentPaneViewModel(
                 mappingTableWidget,
                 this.Tables,
-                 Ioc.Default.GetRequiredService<MigrationDataCreator>(),
+                 Ioc.Default.GetRequiredService<DataTableCreator>(),
                 _mappingTableRepository
             )
             {

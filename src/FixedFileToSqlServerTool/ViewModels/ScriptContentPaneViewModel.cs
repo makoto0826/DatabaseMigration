@@ -46,6 +46,7 @@ public partial class ScriptContentPaneViewModel : IPaneViewModel
     private void Save()
     {
         var newScript = this.ScriptWidget.ToScript();
+        this.ScriptWidget.Renew(newScript);
         _scriptRepository.Save(newScript);
 
         WeakReferenceMessenger.Default.Send(new SavedScriptMessage(newScript));

@@ -30,25 +30,25 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
     [ObservableProperty]
     private DataTable testDataTable;
 
-    private readonly MigrationDataCreator _migrationDataCreator;
+    private readonly DataTableCreator _dataTableCreator;
 
     private readonly MappingTableRepository _mappingTableRepository;
 
     public MappingTableContentPaneViewModel(
         MappingTableWidgetViewModel mappingTableWidget,
         IEnumerable<TableWidgetViewModel> tables,
-        MigrationDataCreator migrationDataCreator,
+        DataTableCreator dataTableCreator,
         MappingTableRepository mappingTableRepository
     )
     {
-        _migrationDataCreator = migrationDataCreator;
+        _dataTableCreator = dataTableCreator;
         _mappingTableRepository = mappingTableRepository;
 
         this.MappingTableWidget = mappingTableWidget;
         this.Tables = new ObservableCollection<TableWidgetViewModel>(tables);
         this.TestDataDocument = new();
         this.LogDocument = new();
-        this.TestDataTable = _migrationDataCreator.CreateEmpty(mappingTableWidget.Table);
+        this.TestDataTable = _dataTableCreator.CreateEmpty(mappingTableWidget.Table);
     }
 
     partial void OnIsSelectedChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
@@ -63,6 +63,8 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
     private void Save()
     {
         var newMappingTable = this.MappingTableWidget.ToMappingTable();
+        this.MappingTableWidget.Renew(newMappingTable);
+
         _mappingTableRepository.Save(newMappingTable);
         WeakReferenceMessenger.Default.Send(new SavedMappingTableMessage(newMappingTable));
     }
@@ -77,7 +79,7 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
             memStream.Write(Encoding.GetEncoding(mappingTable.Encoding).GetBytes(this.TestDataDocument.Text));
             memStream.Position = 0;
 
-            var dataTable = await _migrationDataCreator.CreateAsync(mappingTable, memStream);
+            var dataTable = await _dataTableCreator.CreateAsync(mappingTable, memStream);
             this.TestDataTable = dataTable;
             this.LogDocument = new TextDocument();
         }

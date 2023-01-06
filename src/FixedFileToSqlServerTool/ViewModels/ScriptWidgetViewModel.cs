@@ -25,6 +25,13 @@ public partial class ScriptWidgetViewModel
         this.CodeDocument = new(this.Script.Code);
     }
 
+    public void Renew(Models.Script script)
+    {
+        this.Script = script;
+        this.Name = this.Script.Name;
+        this.CodeDocument = new(this.Script.Code);
+    }
+
     public Models.Script ToScript() =>
         this.Script with
         {
