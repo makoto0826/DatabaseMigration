@@ -88,7 +88,15 @@
                         <DataGridTextColumn Header="列名" IsReadOnly="True" Binding="{Binding Destination.Name}"/>
                         <DataGridTextColumn Header="型名" IsReadOnly="True" Binding="{Binding Destination.Type}"/>
                         <DataGridTextColumn Header="サイズ" IsReadOnly="True" Binding="{Binding Destination.MaxLength}"/>
-                        <DataGridTextColumn Header="NULL" IsReadOnly="True"  Binding="{Binding Destination.IsNullable}"/>
+                        <DataGridTemplateColumn Header="NULL" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <CheckBox IsChecked="{Binding Destination.IsNullable}" IsHitTestVisible="False"  />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
                         <DataGridTemplateColumn Header="変換スクリプト" Width="200">
                             <DataGridTemplateColumn.CellTemplate>

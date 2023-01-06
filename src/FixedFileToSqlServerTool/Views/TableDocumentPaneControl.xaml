@@ -17,7 +17,15 @@
                     <DataGridTextColumn Header="列名"  Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="型名"  Binding="{Binding Type}"/>
                     <DataGridTextColumn Header="サイズ" Binding="{Binding MaxLength}"/>
-                    <DataGridTextColumn Header="NULL" Binding="{Binding IsNullable}"/>
+                    <DataGridTemplateColumn Header="NULL" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <CheckBox IsChecked="{Binding IsNullable}" IsHitTestVisible="False"  />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

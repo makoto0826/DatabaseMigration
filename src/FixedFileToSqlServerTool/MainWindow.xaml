@@ -8,6 +8,7 @@
         xmlns:view="clr-namespace:FixedFileToSqlServerTool.Views"
         xmlns:ad="https://github.com/Dirkster99/AvalonDock"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="FixedFileToSqlServerTool" Height="768" Width="1024">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
