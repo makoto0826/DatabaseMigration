@@ -11,11 +11,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="500*" />
+            <RowDefinition Height="300*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="200*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="200*" />
+            <RowDefinition Height="100*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
@@ -152,34 +154,33 @@
         </DockPanel>
         <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" Height="5" />
         <DockPanel Grid.Row="4" >
-            <DockPanel DockPanel.Dock="Top">
-                <StackPanel DockPanel.Dock="Top">
-                    <Separator />
-                    <Label Content="テスト結果"  />
-                    <Separator />
-                </StackPanel>
-                <DataGrid
-                    DockPanel.Dock="Bottom"
-                    ItemsSource="{Binding TestDataTable}"
-                    SelectionMode="Single"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    CanUserReorderColumns="False" />
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Bottom">
-                <StackPanel DockPanel.Dock="Top">
-                    <Separator />
-                    <Label Content="ログ"  />
-                    <Separator />
-                </StackPanel>
-                <ae:TextEditor
-                    DockPanel.Dock="Bottom"
-                    FontSize="10pt"
-                    IsReadOnly="True"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Auto"
-                    Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel>
+            <StackPanel DockPanel.Dock="Top">
+                <Separator />
+                <Label Content="テスト結果"  />
+                <Separator />
+            </StackPanel>
+            <DataGrid
+                DockPanel.Dock="Bottom"
+                ItemsSource="{Binding TestDataTable}"
+                SelectionMode="Single"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                CanUserReorderColumns="False" />
+        </DockPanel>
+        <GridSplitter Grid.Row="5" HorizontalAlignment="Stretch" Height="5" />
+        <DockPanel Grid.Row="6" DockPanel.Dock="Top">
+            <StackPanel DockPanel.Dock="Top">
+                <Separator />
+                <Label Content="ログ"  />
+                <Separator />
+            </StackPanel>
+            <ae:TextEditor
+                DockPanel.Dock="Bottom"
+                FontSize="10pt"
+                IsReadOnly="True"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
     </Grid>
 </UserControl>

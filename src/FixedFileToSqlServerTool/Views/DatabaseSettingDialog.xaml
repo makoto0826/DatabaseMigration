@@ -1,19 +1,17 @@
-﻿<Window x:Class="FixedFileToSqlServerTool.Views.DatabaseSettingDialog"
+<Window x:Class="FixedFileToSqlServerTool.Views.DatabaseSettingDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:view="clr-namespace:FixedFileToSqlServerTool.Views"
-        xmlns:vm="clr-namespace:FixedFileToSqlServerTool.ViewModels"
         mc:Ignorable="d"
         Title="DB設定"
         Height="270"
         Width="500"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        view:WindowBehavior.HideCloseButton="True"
-        d:DataContext="{d:DesignInstance {x:Type vm:DatabaseSettingDialogViewModel}}">
+        view:WindowBehavior.HideCloseButton="True">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
