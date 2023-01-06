@@ -68,9 +68,6 @@ public partial class MappingTableContentPaneViewModel : IPaneViewModel
     }
 
     [RelayCommand]
-    private void ShowExecutionDialog() { }
-
-    [RelayCommand]
     private async Task Test()
     {
         try

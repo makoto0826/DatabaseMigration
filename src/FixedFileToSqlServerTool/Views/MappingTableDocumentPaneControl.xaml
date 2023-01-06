@@ -30,13 +30,6 @@
                         </StackPanel>
                     </Button>
                     <Separator Margin="4,0" />
-                    <Button Padding="2,4" ToolTip="実行" Command="{Binding ShowExecutionDialogCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconModern Kind="ControlPlay" />
-                            <TextBlock Margin="3,0,0,0" FontSize="12" Text="実行" />
-                        </StackPanel>
-                    </Button>
-                    <Separator Margin="4,0" />
                     <Label Content="マッピングテーブル名" />
                     <TextBox Width="200" Text="{Binding MappingTableWidget.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <Separator Margin="4,0" />

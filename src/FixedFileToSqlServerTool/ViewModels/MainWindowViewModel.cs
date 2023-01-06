@@ -119,6 +119,13 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand]
+    private void ShowMigrationDialog()
+    {
+        var vm = _dialogService.CreateViewModel<MigrationDialogViewModel>();
+        _dialogService.ShowDialog(this, vm);
+    }
+
+    [RelayCommand]
     private void Exit()
     {
         Application.Current.Shutdown();
@@ -236,7 +243,8 @@ public partial class MainWindowViewModel
                 mappingTableWidget,
                 this.Tables,
                  Ioc.Default.GetRequiredService<MigrationDataCreator>(),
-                _mappingTableRepository)
+                _mappingTableRepository
+            )
             {
                 IsSelected = true
             });
