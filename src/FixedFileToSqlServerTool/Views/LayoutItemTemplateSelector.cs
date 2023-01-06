@@ -15,9 +15,9 @@ public class LayoutItemTemplateSelector : DataTemplateSelector
     public override DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container) =>
         item switch
         {
-            MappingTableContentPaneViewModel => MappingTableTemplate,
-            TableContentPaneViewModel => TableTemplate,
-            ScriptContentPaneViewModel => ScriptTemplate,
+            MappingTableContentViewModel => MappingTableTemplate,
+            TableContentViewModel => TableTemplate,
+            ScriptContentViewModel => ScriptTemplate,
             _ => base.SelectTemplate(item, container)
         };
 }

@@ -2,7 +2,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FixedFileToSqlServerTool.ViewModels;
 
-namespace FixedFileToSqlServerTool;
+namespace FixedFileToSqlServerTool.Views;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

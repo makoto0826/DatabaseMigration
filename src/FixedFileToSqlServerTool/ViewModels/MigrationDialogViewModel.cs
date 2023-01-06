@@ -19,15 +19,15 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunnable))]
-    private string filePath;
+    private string _filePath;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunnable))]
-    private bool isRunning;
+    private bool _isRunning;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunnable))]
-    private MappingTable? selectedMappingTable;
+    private MappingTable? _selectedMappingTable;
 
     public bool IsRunnable
     {
@@ -71,7 +71,7 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     }
 
     [RelayCommand]
-    private async Task Run()
+    private async Task RunAsync()
     {
         this.DialogResult = true;
         this.RequestClose?.Invoke(this, EventArgs.Empty);

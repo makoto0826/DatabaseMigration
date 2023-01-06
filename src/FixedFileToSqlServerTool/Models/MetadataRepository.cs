@@ -8,7 +8,7 @@ public class MetadataRepository
     private readonly SqlConnection _connection;
 
     public MetadataRepository(SqlConnection connection) =>
-        _connection = connection;
+        _connection = connection ?? throw new ArgumentNullException(nameof(connection));
 
     public async Task<List<Table>> GetTableDefinitionsAsync()
     {

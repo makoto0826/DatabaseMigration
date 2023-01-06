@@ -8,42 +8,37 @@ public class ScriptRunner
 {
     private readonly ConcurrentDictionary<string, Script<object>> _caches = new();
 
-    public void CacheClear() => _caches.Clear();
+    public void ClearCache() => _caches.Clear();
 
-    public Task<ScriptRunnerResult> RunAsync(ScriptRunnerContext context)
-    {
-        return Task.Run(async () =>
+    public Task<object> RunAsync(string code, string? variable = null) =>
+        Task.Run(async () =>
         {
             try
             {
-                if (!_caches.TryGetValue(context.Code, out var script))
+                if (!_caches.TryGetValue(code, out var script))
                 {
-                    script = CSharpScript.Create<object>(context.Code, globalsType: typeof(ScriptVariables));
+                    script = CSharpScript.Create<object>(code, globalsType: typeof(ScriptVariables));
                     script.Compile();
-                    _caches.TryAdd(context.Code, script);
+                    _caches.TryAdd(code, script);
                 }
 
-                var state = await script.RunAsync(new ScriptVariables(context.Variable));
-                return new ScriptRunnerResult(true, state.ReturnValue, null);
+                var state = await script.RunAsync(new ScriptVariables(variable));
+                return state.ReturnValue;
             }
             catch (CompilationErrorException ex)
             {
-                return new ScriptRunnerResult(false, null, string.Join(Environment.NewLine, ex.Diagnostics));
+                throw new ModelException(String.Join(Environment.NewLine, ex.Diagnostics), ex);
             }
             catch (Exception ex)
             {
-                return new ScriptRunnerResult(false, null, ex.Message);
+                throw new ModelException(ex.Message);
             }
         });
-    }
 
     public class ScriptVariables
     {
         public string Value;
 
-        public ScriptVariables(string? value)
-        {
-            Value = value ?? "";
-        }
+        public ScriptVariables(string? value) => Value = value;
     }
 }

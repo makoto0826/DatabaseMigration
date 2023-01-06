@@ -16,11 +16,11 @@ public partial class MainWindowViewModel
 {
     public ObservableCollection<IPaneViewModel> Documents { get; } = new();
 
-    public ObservableCollection<MappingTableWidgetViewModel> MappingTables { get; } = new();
+    public ObservableCollection<MappingTableTreeViewModel> MappingTables { get; } = new();
 
-    public ObservableCollection<TableWidgetViewModel> Tables { get; } = new();
+    public ObservableCollection<TableTreeNodeViewModel> Tables { get; } = new();
 
-    public ObservableCollection<ScriptWidgetViewModel> Scripts { get; } = new();
+    public ObservableCollection<ScriptTreeNodeViewModel> Scripts { get; } = new();
 
     private int mappingCount = 1;
 
@@ -57,25 +57,25 @@ public partial class MainWindowViewModel
 
     private void HandleIsSelectedChanged(object _, ChangedIsSelectedPaneMessage mesage)
     {
-        if (mesage.Value is ScriptContentPaneViewModel scriptVm)
+        if (mesage.Value is ScriptContentViewModel scriptVm)
         {
-            foreach (var scriptWidget in this.Scripts)
+            foreach (var node in this.Scripts)
             {
-                scriptWidget.IsSelected = scriptWidget.Script.Id == scriptVm.ScriptWidget.Script.Id;
+                node.IsSelected = node.Script.Id == scriptVm.Script.Id;
             }
         }
-        else if (mesage.Value is MappingTableContentPaneViewModel mappingTableVm)
+        else if (mesage.Value is MappingTableContentViewModel mappingTableVm)
         {
-            foreach (var mappingTableWidget in this.MappingTables)
+            foreach (var node in this.MappingTables)
             {
-                mappingTableWidget.IsSelected = mappingTableWidget.Table.Id == mappingTableVm.MappingTableWidget.Table.Id;
+                node.IsSelected = node.MappingTable.Id == mappingTableVm.MappingTable.Id;
             }
         }
-        else if (mesage.Value is TableContentPaneViewModel tableVm)
+        else if (mesage.Value is TableContentViewModel tableVm)
         {
-            foreach (var tableWidget in this.Tables)
+            foreach (var node in this.Tables)
             {
-                tableWidget.IsSelected = tableWidget.Table.Id == tableVm.TableWidget.Table.Id;
+                node.IsSelected = node.Table.Id == tableVm.Table.Id;
             }
         }
     }
@@ -84,30 +84,34 @@ public partial class MainWindowViewModel
 
     private void HandleSavedScript(object _, SavedScriptMessage message)
     {
-        var storedScirptWidget = this.Scripts.FirstOrDefault(x => x.Script.Id == message.Value.Id);
+        var node = this.Scripts.FirstOrDefault(x => x.Script.Id == message.Value.Id);
 
-        if (storedScirptWidget is null)
+        if (node is null)
         {
             this.Scripts.Add(new(message.Value));
+        }
+        else
+        {
+            node.Script = message.Value;
         }
     }
 
     private void HandleSavedMappingTable(object _, SavedMappingTableMessage message)
     {
-        var storedMappingTableWidget = this.MappingTables.FirstOrDefault(x => x.Table.Id == message.Value.Id);
+        var node = this.MappingTables.FirstOrDefault(x => x.MappingTable.Id == message.Value.Id);
 
-        if (storedMappingTableWidget is null)
+        if (node is null)
         {
-            this.MappingTables.Add(new(message.Value, this.Scripts.Select(x => x.Script)));
+            this.MappingTables.Add(new(message.Value));
         }
     }
 
     [RelayCommand]
     private void Loaded()
     {
-        this.Tables.AddRange(_tableRepository.FindAll().Select(x => new TableWidgetViewModel(x)));
-        this.Scripts.AddRange(_scriptRepository.FindAll().Select(x => new ScriptWidgetViewModel(x)));
-        this.MappingTables.AddRange(_mappingTableRepository.FindAll().Select(x => new MappingTableWidgetViewModel(x, this.Scripts.Select(x => x.Script))));
+        this.Tables.AddRange(_tableRepository.FindAll().Select(x => new TableTreeNodeViewModel(x)));
+        this.Scripts.AddRange(_scriptRepository.FindAll().Select(x => new ScriptTreeNodeViewModel(x)));
+        this.MappingTables.AddRange(_mappingTableRepository.FindAll().Select(x => new MappingTableTreeViewModel(x)));
     }
 
     [RelayCommand]
@@ -120,7 +124,7 @@ public partial class MainWindowViewModel
             return;
         }
 
-        var vm = new MigrationDialogViewModel(this.MappingTables.Select(x => x.Table), databaseSetting, _dialogService);
+        var vm = new MigrationDialogViewModel(this.MappingTables.Select(x => x.MappingTable), databaseSetting, _dialogService);
         _dialogService.ShowDialog(this, vm);
     }
 
@@ -158,7 +162,7 @@ public partial class MainWindowViewModel
 
             _tableRepository.Save(tables);
             this.Tables.Clear();
-            this.Tables.AddRange(tables.Select(x => new TableWidgetViewModel(x)));
+            this.Tables.AddRange(tables.Select(x => new TableTreeNodeViewModel(x)));
         }
         catch (Exception ex)
         {
@@ -169,10 +173,10 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void AddMappingTable()
     {
-        var table = MappingTable.Create($"新規マッピングテーブル{mappingCount++}");
-        var vm = new MappingTableContentPaneViewModel(
-            new(table, this.Scripts.Select(x => x.Script)),
-            this.Tables,
+        var mappingTable = MappingTable.Create($"新規マッピングテーブル{mappingCount++}");
+        var vm = new MappingTableContentViewModel(
+            mappingTable,
+            this.Tables.Select(x => x.Table),
             Ioc.Default.GetRequiredService<DataTableCreator>(),
             _mappingTableRepository
         );
@@ -184,24 +188,24 @@ public partial class MainWindowViewModel
     private void AddScript()
     {
         var script = Script.Create($"新規スクリプト{scriptCount++}");
-        var vm = new ScriptContentPaneViewModel(new(script), _scriptRepository, Ioc.Default.GetRequiredService<ScriptRunner>());
+        var vm = new ScriptContentViewModel(script, _scriptRepository, Ioc.Default.GetRequiredService<ScriptRunner>());
         this.Documents.Add(vm);
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    public void DeleteMappingTable(MappingTableWidgetViewModel mappingTableWidget)
+    public void DeleteMappingTable(MappingTableTreeViewModel node)
     {
-        var isOk = _dialogService.ShowMessageBox(this, text: $"{mappingTableWidget.Table.Name}を削除しますか?", title: "マッピングテーブル削除", MessageBoxButton.YesNo);
+        var isOk = _dialogService.ShowMessageBox(this, text: $"{node.MappingTable.Name}を削除しますか?", title: "マッピングテーブル削除", MessageBoxButton.YesNo);
 
         if (!isOk ?? false)
         {
             return;
         }
 
-        _mappingTableRepository.Delete(mappingTableWidget.Table);
+        _mappingTableRepository.Delete(node.MappingTable);
 
-        this.MappingTables.Remove(mappingTableWidget);
-        var vm = this.Documents.OfType<MappingTableContentPaneViewModel>().FirstOrDefault(x => x.MappingTableWidget.Table.Id == mappingTableWidget.Table.Id);
+        this.MappingTables.Remove(node);
+        var vm = this.Documents.OfType<MappingTableContentViewModel>().FirstOrDefault(x => x.MappingTable.Id == node.MappingTable.Id);
 
         if (vm is not null)
         {
@@ -210,19 +214,19 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(CheckScript))]
-    private void DeleteScript(ScriptWidgetViewModel scriptWidget)
+    private void DeleteScript(ScriptTreeNodeViewModel node)
     {
-        var isOk = _dialogService.ShowMessageBox(this, text: $"{scriptWidget.Script.Name}を削除しますか?", title: "スクリプト削除", MessageBoxButton.YesNo);
+        var isOk = _dialogService.ShowMessageBox(this, text: $"{node.Script.Name}を削除しますか?", title: "スクリプト削除", MessageBoxButton.YesNo);
 
         if (!isOk ?? false)
         {
             return;
         }
 
-        _scriptRepository.Delete(scriptWidget.Script);
+        _scriptRepository.Delete(node.Script);
 
-        this.Scripts.Remove(scriptWidget);
-        var vm = this.Documents.OfType<ScriptContentPaneViewModel>().FirstOrDefault(x => x.ScriptWidget.Script.Id == scriptWidget.Script.Id);
+        this.Scripts.Remove(node);
+        var vm = this.Documents.OfType<ScriptContentViewModel>().FirstOrDefault(x => x.Script.Id == node.Script.Id);
 
         if (vm is not null)
         {
@@ -231,73 +235,67 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(CheckMappingTable))]
-    private void OpenMappingTable(MappingTableWidgetViewModel mappingTableWidget)
+    private void OpenMappingTable(MappingTableTreeViewModel node)
     {
-        var vmList = this.Documents.OfType<MappingTableContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.MappingTableWidget.Table.Id == mappingTableWidget.Table.Id);
+        var vm = this.Documents.OfType<MappingTableContentViewModel>().FirstOrDefault(x => x.MappingTable.Id == node.MappingTable.Id);
 
-        if (hitVm is null)
+        if (vm is null)
         {
-            this.Documents.Add(new MappingTableContentPaneViewModel(
-                mappingTableWidget,
-                this.Tables,
+            this.Documents.Add(new MappingTableContentViewModel(
+                node.MappingTable,
+                this.Tables.Select(x => x.Table),
                  Ioc.Default.GetRequiredService<DataTableCreator>(),
                 _mappingTableRepository
             )
             {
-                IsSelected = true
+                IsActive = true
             });
         }
         else
         {
-            hitVm.IsSelected = true;
+            vm.IsActive = true;
         }
     }
 
     [RelayCommand(CanExecute = nameof(CheckTable))]
-    private void OpenTable(TableWidgetViewModel tableWidget)
+    private void OpenTable(TableTreeNodeViewModel node)
     {
-        var vmList = this.Documents.OfType<TableContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.TableWidget.Table.Id == tableWidget.Table.Id);
+        var vm = this.Documents.OfType<TableContentViewModel>().FirstOrDefault(x => x.Table.Id == node.Table.Id);
 
-        if (hitVm is null)
+        if (vm is null)
         {
-            this.Documents.Add(new TableContentPaneViewModel(tableWidget)
-            {
-                IsSelected = true
-            });
+            this.Documents.Add(new TableContentViewModel(node.Table) { IsActive = true });
         }
         else
         {
-            hitVm.IsSelected = true;
+            vm.IsActive = true;
         }
     }
 
     [RelayCommand(CanExecute = nameof(CheckScript))]
-    private void OpenScript(ScriptWidgetViewModel scriptWidget)
+    private void OpenScript(ScriptTreeNodeViewModel node)
     {
-        var vmList = this.Documents.OfType<ScriptContentPaneViewModel>().ToList();
-        var hitVm = vmList.FirstOrDefault(x => x.ScriptWidget.Script.Id == scriptWidget.Script.Id);
+        var vm = this.Documents.OfType<ScriptContentViewModel>().FirstOrDefault(x => x.Script.Id == node.Script.Id);
 
-        if (hitVm is null)
+        if (vm is null)
         {
-            this.Documents.Add(new ScriptContentPaneViewModel(
-                scriptWidget,
+            this.Documents.Add(new ScriptContentViewModel(
+                node.Script,
                 _scriptRepository,
                 Ioc.Default.GetRequiredService<ScriptRunner>())
             {
-                IsSelected = true
+                IsActive = true
             });
         }
         else
         {
-            hitVm.IsSelected = true;
+            vm.IsActive = true;
         }
     }
 
-    private bool CheckMappingTable(MappingTableWidgetViewModel? mappingTableWidget) => mappingTableWidget is not null;
+    private bool CheckMappingTable(MappingTableTreeViewModel node) => node is not null;
 
-    private bool CheckTable(TableWidgetViewModel? tableWidget) => tableWidget is not null;
+    private bool CheckTable(TableTreeNodeViewModel node) => node is not null;
 
-    private bool CheckScript(ScriptWidgetViewModel? scriptWidget) => scriptWidget is not null;
+    private bool CheckScript(ScriptTreeNodeViewModel node) => node is not null;
 }

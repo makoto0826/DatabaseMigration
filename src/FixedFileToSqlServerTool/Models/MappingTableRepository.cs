@@ -8,10 +8,8 @@ public class MappingTableRepository
 
     private readonly LiteDatabase _database;
 
-    public MappingTableRepository(LiteDatabase database)
-    {
+    public MappingTableRepository(LiteDatabase database) =>
         _database = database ?? throw new ArgumentNullException(nameof(database));
-    }
 
     public List<MappingTable> FindAll() =>
         _database.GetCollection<MappingTable>(CollectionName).FindAll().ToList();

@@ -8,10 +8,8 @@ public class ScriptRepository
 
     private readonly LiteDatabase _database;
 
-    public ScriptRepository(LiteDatabase database)
-    {
+    public ScriptRepository(LiteDatabase database) =>
         _database = database ?? throw new ArgumentNullException(nameof(database));
-    }
 
     public List<Script> FindAll() =>
         _database.GetCollection<Script>(CollectionName).FindAll().ToList();

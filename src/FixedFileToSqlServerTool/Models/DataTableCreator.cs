@@ -8,10 +8,8 @@ public class DataTableCreator
 {
     private readonly ScriptRunner _scriptRunner;
 
-    public DataTableCreator(ScriptRunner scriptRunner)
-    {
-        _scriptRunner = scriptRunner;
-    }
+    public DataTableCreator(ScriptRunner scriptRunner) =>
+        _scriptRunner = scriptRunner ?? throw new ArgumentNullException(nameof(scriptRunner));
 
     public DataTable CreateEmpty(MappingTable table)
     {
@@ -48,14 +46,7 @@ public class DataTableCreator
                         throw new ModelException("生成スクリプトが設定されていません");
                     }
 
-                    var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(column.GenerationScript.Code));
-
-                    if (!result.IsSucceeded)
-                    {
-                        throw new ModelException(result.ErrorMessage);
-                    }
-
-                    row[column.Destination.Name] = result.ReturnValue;
+                    row[column.Destination.Name] = await _scriptRunner.RunAsync(column.GenerationScript.Code);
                 }
                 else
                 {
@@ -68,14 +59,7 @@ public class DataTableCreator
 
                     if (column.ConvertScript is not null)
                     {
-                        var result = await _scriptRunner.RunAsync(new ScriptRunnerContext(column.ConvertScript.Code, value));
-
-                        if (!result.IsSucceeded)
-                        {
-                            throw new ModelException(result.ErrorMessage);
-                        }
-
-                        row[column.Destination.Name] = result.ReturnValue;
+                        row[column.Destination.Name] = await _scriptRunner.RunAsync(column.ConvertScript.Code, value);
                     }
                     else
                     {
