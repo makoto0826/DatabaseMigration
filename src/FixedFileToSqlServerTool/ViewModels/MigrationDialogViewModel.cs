@@ -46,14 +46,18 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
     private readonly DatabaseSetting _databaseSetting;
 
+    private readonly MigrationHandler _migrationHanlder;
+
     private readonly IDialogService _dialogService;
 
     public MigrationDialogViewModel(
         IEnumerable<MappingTable> mappingTables,
         DatabaseSetting databaseSetting,
+        MigrationHandler migrationHandler,
         IDialogService dialogService)
     {
         _databaseSetting = databaseSetting;
+        _migrationHanlder = migrationHandler;
         _dialogService = dialogService;
 
         this.MappingTables = new(mappingTables);
@@ -73,6 +77,19 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     [RelayCommand]
     private async Task RunAsync()
     {
+        try
+        {
+            await _migrationHanlder.HandleAsync(
+                this.FilePath,
+                this.SelectedMappingTable,
+                _databaseSetting
+            );
+        }
+        catch (ModelException ex)
+        {
+            throw new ModelException("", ex);
+        }
+
         this.DialogResult = true;
         this.RequestClose?.Invoke(this, EventArgs.Empty);
     }

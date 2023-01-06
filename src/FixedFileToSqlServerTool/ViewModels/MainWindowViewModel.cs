@@ -104,6 +104,10 @@ public partial class MainWindowViewModel
         {
             this.MappingTables.Add(new(message.Value));
         }
+        else
+        {
+            node.MappingTable = message.Value;
+        }
     }
 
     [RelayCommand]
@@ -124,7 +128,13 @@ public partial class MainWindowViewModel
             return;
         }
 
-        var vm = new MigrationDialogViewModel(this.MappingTables.Select(x => x.MappingTable), databaseSetting, _dialogService);
+        var vm = new MigrationDialogViewModel(
+            this.MappingTables.Select(x => x.MappingTable),
+            databaseSetting,
+            Ioc.Default.GetRequiredService<MigrationHandler>(),
+            _dialogService
+        );
+
         _dialogService.ShowDialog(this, vm);
     }
 
@@ -239,6 +249,7 @@ public partial class MainWindowViewModel
     {
         var vm = this.Documents.OfType<MappingTableContentViewModel>().FirstOrDefault(x => x.MappingTable.Id == node.MappingTable.Id);
 
+        Ioc
         if (vm is null)
         {
             this.Documents.Add(new MappingTableContentViewModel(
