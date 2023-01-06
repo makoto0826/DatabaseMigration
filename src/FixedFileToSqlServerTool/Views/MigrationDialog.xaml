@@ -12,33 +12,67 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         view:WindowBehavior.HideCloseButton="True">
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <Window.Resources>
         <view:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"  />
+            <RowDefinition Height="Auto"  />
             <RowDefinition Height="*"  />
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
-            <StackPanel Orientation="Vertical" Margin="8">
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="ファイル選択" Command="{Binding OpenCommand}" />
-                </StackPanel>
-            </StackPanel>
-        </DockPanel>
-        <Border Grid.Row="1" Background="WhiteSmoke">
+        <Grid Grid.Row="0" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="ファイル選択" Command="{Binding OpenCommand}"  Margin="0,0,8,0" />
+            <TextBox Grid.Column="1" Text="{Binding FilePath,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="ファイルマッピングテーブル" />
+            <ComboBox
+                Grid.Column="1"
+                DisplayMemberPath="Name"
+                SelectedValue="{Binding SelectedMappingTable,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}"
+                ItemsSource="{Binding MappingTables}"  />
+        </Grid>
+
+        <StackPanel Grid.Row="2" Margin="8">
+            <DataGrid DockPanel.Dock="Bottom" ItemsSource="{Binding SelectedMappingTable.Columns}"
+                IsReadOnly="True"
+                SelectionMode="Single"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                CanUserReorderColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="自動生成" Binding="{Binding IsGeneartion}"/>
+                    <DataGridTextColumn Header="開始位置" Binding="{Binding Source.StartPosition}"/>
+                    <DataGridTextColumn Header="終了位置" Binding="{Binding Source.EndPosition}"/>
+                    <DataGridTextColumn Header="列名"     Binding="{Binding Destination.Name}"/>
+                    <DataGridTextColumn Header="型名"     Binding="{Binding Destination.Type}"/>
+                    <DataGridTextColumn Header="サイズ"   Binding="{Binding Destination.MaxLength}"/>
+                    <DataGridTextColumn Header="NULL"     Binding="{Binding Destination.IsNullable}"/>
+                    <DataGridTextColumn Header="変換スクリプト" Binding="{Binding ConvertScript.Name}"/>
+                    <DataGridTextColumn Header="生成スクリプト" Binding="{Binding GenerationScript.Name}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+        <Border Grid.Row="4" Background="WhiteSmoke">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8">
-                <Button x:Name="OkButton" Content="次へ" Width="80" Margin="0,0,16,0" IsEnabled="{Binding IsRunning,Converter={StaticResource InverseBooleanConverter}}">
+                <Button x:Name="OkButton" Content="実行" Width="80" Margin="0,0,16,0" IsEnabled="{Binding IsRunnable}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding Path=OkCommand}" />
+                            <i:InvokeCommandAction Command="{Binding Path=RunCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>

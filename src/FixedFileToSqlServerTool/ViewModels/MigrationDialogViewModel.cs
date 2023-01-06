@@ -10,7 +10,7 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 {
     private static readonly List<FileFilter> _filters = new List<FileFilter>
     {
-         new("固定長ファイル","*.txt")
+         new("固定長ファイル","txt")
     };
 
     public event EventHandler? RequestClose;
@@ -18,25 +18,63 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     public bool? DialogResult { get; private set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunnable))]
     private string filePath;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunnable))]
+    private bool isRunning;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunnable))]
+    private MappingTable? selectedMappingTable;
+
+    public bool IsRunnable
+    {
+        get
+        {
+            if (this.IsRunning)
+            {
+                return false;
+            }
+
+            return !String.IsNullOrEmpty(this.FilePath) && this.SelectedMappingTable != null;
+        }
+    }
+
+    public List<MappingTable> MappingTables { get; }
+
+    private readonly DatabaseSetting _databaseSetting;
 
     private readonly IDialogService _dialogService;
 
-    public MigrationDialogViewModel(IDialogService dialogService)
+    public MigrationDialogViewModel(
+        IEnumerable<MappingTable> mappingTables,
+        DatabaseSetting databaseSetting,
+        IDialogService dialogService)
     {
+        _databaseSetting = databaseSetting;
         _dialogService = dialogService;
+
+        this.MappingTables = new(mappingTables);
     }
 
     [RelayCommand]
     private void Open()
     {
-        var filePath = _dialogService.ShowOpenFileDialog(this, new OpenFileDialogSettings
+        this.FilePath = _dialogService.ShowOpenFileDialog(this, new OpenFileDialogSettings
         {
             AllowMultiple = false,
             InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             Filters = _filters
         });
+    }
 
+    [RelayCommand]
+    private async Task Run()
+    {
+        this.DialogResult = true;
+        this.RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]

@@ -36,7 +36,6 @@ public partial class App : Application
                 .AddSingleton(x => new ScriptRunner())
                 .AddSingleton(x => new MigrationDataCreator(x.GetRequiredService<ScriptRunner>()))
                 .AddTransient<DatabaseSettingDialogViewModel>()
-                .AddTransient<MigrationDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider()
         ); ;

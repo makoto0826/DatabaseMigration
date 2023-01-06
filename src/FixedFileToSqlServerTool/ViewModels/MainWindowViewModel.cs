@@ -121,7 +121,14 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void ShowMigrationDialog()
     {
-        var vm = _dialogService.CreateViewModel<MigrationDialogViewModel>();
+        var databaseSetting = _databaseSettingRepository.Get();
+
+        if (databaseSetting is null)
+        {
+            return;
+        }
+
+        var vm = new MigrationDialogViewModel(this.MappingTables.Select(x => x.Table), databaseSetting, _dialogService);
         _dialogService.ShowDialog(this, vm);
     }
 
