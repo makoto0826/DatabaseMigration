@@ -31,12 +31,12 @@ jobs:
 
     - name: action-zip
       uses: montudor/action-zip@v1.0.0
-        with:
-          args: zip -r FixedFileToSqlServerGenerator.zip ./publish
+      with:
+        args: zip -r FixedFileToSqlServerGenerator.zip ./publish
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
-        with:
-          name: FixedFileToSqlServerGenerator
-          path: FixedFileToSqlServerGenerator.zip
+      with:
+        name: FixedFileToSqlServerGenerator
+        path: FixedFileToSqlServerGenerator.zip
           retention-days: 5
