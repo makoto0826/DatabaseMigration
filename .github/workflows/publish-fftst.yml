@@ -1,0 +1,44 @@
+name: "Publish FixedFileToSqlServerTool"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  DOTNET_VERSION: "7.0.101"
+  PROJECT_PATH: "src/FixedFileToSqlServerTool"
+  PROJECT_NAME: "FixedFileToSqlServerTool"
+
+jobs:
+  publish-fixed-file-to-sql-server-local:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: |
+          cd ${{ env.PROJECT_PATH }}
+          dotnet build -c Release --no-restore
+          dotnet publish -c Release -o ./publish --version-suffix ${{ github.sha }}
+
+      - name: "Zip Publish"
+        uses: vimtor/action-zip@v1
+        with:
+          files: ${{ env.PROJECT_PATH }}/publish/*
+          dest: ${{ env.PROJECT_NAME }}.zip
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PROJECT_NAME }}
+          path: ${{ env.PROJECT_NAME }}.zip
+          retention-days: 5
