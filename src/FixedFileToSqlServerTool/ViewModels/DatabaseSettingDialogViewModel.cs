@@ -60,7 +60,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
         try
         {
             this.IsRunning = true;
-            using var connection = this.CreateDatabaseSetting().CreateConnection();
+            using var connection = this.ToDatabaseSetting().CreateConnection();
             await connection.OpenAsync();
 
             _dialogService.ShowMessageBox(this, text: "接続のテストに成功しました", title: "接続テスト成功");
@@ -79,7 +79,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
     private void Ok()
     {
         this.DialogResult = true;
-        _databaseSettingRepository.Save(this.CreateDatabaseSetting());
+        _databaseSettingRepository.Save(this.ToDatabaseSetting());
         this.RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
@@ -90,7 +90,7 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
         this.RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
-    private DatabaseSetting CreateDatabaseSetting() =>
+    private DatabaseSetting ToDatabaseSetting() =>
         new DatabaseSetting
         {
             Server = this.Server,

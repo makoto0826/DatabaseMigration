@@ -8,18 +8,17 @@ using CommunityToolkit.Mvvm.Messaging;
 using FixedFileToSqlServerTool.Messaging.Messages;
 using FixedFileToSqlServerTool.Models;
 using ICSharpCode.AvalonEdit.Document;
-using Microsoft.CodeAnalysis.Scripting;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
 [INotifyPropertyChanged]
-public partial class MappingTableContentViewModel : IPaneViewModel
+public partial class MappingTableContentViewModel : IContentViewModel
 {
-    public List<Table> Tables { get; }
-
     public MappingTable MappingTable { get; }
 
-    public ObservableCollection<MappingColumn> Columns { get; } = new();
+    public List<Models.Table> Tables { get; }
+
+    public ObservableCollection<MappingColumnViewModel> EditColumns { get; }
 
     [ObservableProperty]
     private bool _isActive;
@@ -39,19 +38,24 @@ public partial class MappingTableContentViewModel : IPaneViewModel
     [ObservableProperty]
     private DataTable _testDataTable;
 
+    private readonly IEnumerable<Models.Script> _scripts;
+
     private readonly DataTableCreator _dataTableCreator;
 
     private readonly MappingTableRepository _mappingTableRepository;
 
     public MappingTableContentViewModel(
         MappingTable mappingTable,
-        IEnumerable<Table> tables,
+        IEnumerable<Models.Table> tables,
+        IEnumerable<Models.Script> scripts,
         DataTableCreator dataTableCreator,
         MappingTableRepository mappingTableRepository
     )
     {
+        _scripts = scripts;
         _dataTableCreator = dataTableCreator;
         _mappingTableRepository = mappingTableRepository;
+        _scripts = scripts;
 
         this.MappingTable = mappingTable;
         this.EditName = mappingTable.Name;
@@ -60,28 +64,63 @@ public partial class MappingTableContentViewModel : IPaneViewModel
         this.TestDataDocument = new();
         this.LogDocument = new();
         this.TestDataTable = _dataTableCreator.CreateEmpty(mappingTable);
-    }
 
-    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
-
-    /*
-    public void Renew(MappingTable table)
-    {
-        this.Name = table.Name;
-        this.TableName = table.TableName;
-        this.Table = table;
-        this.Columns = new ObservableCollection<MappingColumnWidgetViewModel>(
-            table.Columns
-                .Select(x => new MappingColumnWidgetViewModel(x, _scripts))
+        this.EditColumns = new ObservableCollection<MappingColumnViewModel>(
+            mappingTable.Columns
+                .Select(x => new MappingColumnViewModel(x, scripts))
                 .ToList());
     }
 
-    public MappingTable ToMappingTable() =>
-        this.Table with
+    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsActiveMessage(this));
+
+    [RelayCommand]
+    private void TableSelectionChanged(Models.Table table)
+    {
+        this.EditColumns.Clear();
+        this.EditColumns.AddRange(
+            table.Columns.Select(x => new MappingColumnViewModel(MappingColumn.Create(x), _scripts))
+        );
+    }
+
+    [RelayCommand]
+    private void Save()
+    {
+        var newMappingTable = this.ToMappingTable();
+        _mappingTableRepository.Save(newMappingTable);
+        WeakReferenceMessenger.Default.Send(new SavedMappingTableMessage(newMappingTable));
+    }
+
+    [RelayCommand]
+    private async Task TestAsync()
+    {
+        this.LogDocument = new("実行中...しばらくお待ちください");
+
+        try
         {
-            Name = this.Name,
-            TableName = this.TableName,
-            Columns = this.Columns.Select(x => new MappingColumn
+            var mappingTable = this.ToMappingTable();
+            using var memStream = new MemoryStream();
+            memStream.Write(Encoding.GetEncoding(mappingTable.Encoding).GetBytes(this.TestDataDocument.Text));
+            memStream.Position = 0;
+
+            var dataTable = await _dataTableCreator.CreateAsync(mappingTable, memStream);
+            this.TestDataTable = dataTable;
+            this.LogDocument = new();
+        }
+        catch (Exception ex)
+        {
+            this.LogDocument = new(ex.Message);
+        }
+    }
+
+    [RelayCommand]
+    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
+
+    private MappingTable ToMappingTable() =>
+        this.MappingTable with
+        {
+            Name = this.EditName,
+            TableName = this.SelectedTableName,
+            Columns = this.EditColumns.Select(x => new MappingColumn
             {
                 IsGeneration = x.IsGeneration,
                 Source = x.StartPosition.HasValue && x.EndPosition.HasValue ? new FixedColumn
@@ -95,53 +134,4 @@ public partial class MappingTableContentViewModel : IPaneViewModel
             })
             .ToList()
         };
-}
-    */
-
-    [RelayCommand]
-    private void TableSelectionChanged(Table table)
-    {
-        /*
-        this.Columns.AddRange(
-        table.Columns.Select(x =>
-                new MappingColumnWidgetViewModel(MappingColumn.Create(x), _scripts)
-            )
-        );
-        */
-    }
-
-    [RelayCommand]
-    private void Save()
-    {
-        // var newMappingTable = this.MappingTableWidget.ToMappingTable();
-        // this.MappingTableWidget.Renew(newMappingTable);
-
-        // _mappingTableRepository.Save(newMappingTable);
-        // WeakReferenceMessenger.Default.Send(new SavedMappingTableMessage(newMappingTable));
-    }
-
-    [RelayCommand]
-    private async Task TestAsync()
-    {
-        /*
-        try
-        {
-            var mappingTable = this.MappingTableWidget.ToMappingTable();
-            using var memStream = new MemoryStream();
-            memStream.Write(Encoding.GetEncoding(mappingTable.Encoding).GetBytes(this.TestDataDocument.Text));
-            memStream.Position = 0;
-
-            var dataTable = await _dataTableCreator.CreateAsync(mappingTable, memStream);
-            this.TestDataTable = dataTable;
-            this.LogDocument = new();
-        }
-        catch (Exception ex)
-        {
-            this.LogDocument = new(ex.Message);
-        }
-        */
-    }
-
-    [RelayCommand]
-    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
 }

@@ -7,7 +7,7 @@ using FixedFileToSqlServerTool.Models;
 namespace FixedFileToSqlServerTool.ViewModels;
 
 [INotifyPropertyChanged]
-public partial class TableContentViewModel : IPaneViewModel
+public partial class TableContentViewModel : IContentViewModel
 {
     public Table Table { get; }
 
@@ -16,7 +16,7 @@ public partial class TableContentViewModel : IPaneViewModel
 
     public TableContentViewModel(Table table) => this.Table = table;
 
-    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
+    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsActiveMessage(this));
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));

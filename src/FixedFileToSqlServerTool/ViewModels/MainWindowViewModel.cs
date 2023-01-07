@@ -14,7 +14,7 @@ namespace FixedFileToSqlServerTool.ViewModels;
 [INotifyPropertyChanged]
 public partial class MainWindowViewModel
 {
-    public ObservableCollection<IPaneViewModel> Documents { get; } = new();
+    public ObservableCollection<IContentViewModel> Documents { get; } = new();
 
     public ObservableCollection<MappingTableTreeViewModel> MappingTables { get; } = new();
 
@@ -52,10 +52,10 @@ public partial class MainWindowViewModel
         WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
         WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
         WeakReferenceMessenger.Default.Register<SavedMappingTableMessage>(this, this.HandleSavedMappingTable);
-        WeakReferenceMessenger.Default.Register<ChangedIsSelectedPaneMessage>(this, this.HandleIsSelectedChanged);
+        WeakReferenceMessenger.Default.Register<ChangedIsActiveMessage>(this, this.HandleIsActiveChanged);
     }
 
-    private void HandleIsSelectedChanged(object _, ChangedIsSelectedPaneMessage mesage)
+    private void HandleIsActiveChanged(object _, ChangedIsActiveMessage mesage)
     {
         if (mesage.Value is ScriptContentViewModel scriptVm)
         {
@@ -187,6 +187,7 @@ public partial class MainWindowViewModel
         var vm = new MappingTableContentViewModel(
             mappingTable,
             this.Tables.Select(x => x.Table),
+            this.Scripts.Select(x => x.Script),
             Ioc.Default.GetRequiredService<DataTableCreator>(),
             _mappingTableRepository
         );
@@ -249,12 +250,12 @@ public partial class MainWindowViewModel
     {
         var vm = this.Documents.OfType<MappingTableContentViewModel>().FirstOrDefault(x => x.MappingTable.Id == node.MappingTable.Id);
 
-        Ioc
         if (vm is null)
         {
             this.Documents.Add(new MappingTableContentViewModel(
                 node.MappingTable,
                 this.Tables.Select(x => x.Table),
+                this.Scripts.Select(x => x.Script),
                  Ioc.Default.GetRequiredService<DataTableCreator>(),
                 _mappingTableRepository
             )

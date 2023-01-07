@@ -3,7 +3,7 @@ using FixedFileToSqlServerTool.ViewModels;
 
 namespace FixedFileToSqlServerTool.Messaging.Messages;
 
-public class ClosedPaneMessage : ValueChangedMessage<IPaneViewModel>
+public class ClosedPaneMessage : ValueChangedMessage<IContentViewModel>
 {
-    public ClosedPaneMessage(IPaneViewModel value) : base(value) { }
+    public ClosedPaneMessage(IContentViewModel value) : base(value) { }
 }

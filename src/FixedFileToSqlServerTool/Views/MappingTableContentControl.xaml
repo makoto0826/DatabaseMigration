@@ -35,8 +35,8 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="テーブル名" />
                         <ComboBox x:Name="TableComboBox"
-                                  DisplayMemberPath="Table.Name"
-                                  SelectedValuePath="Table.Name"
+                                  DisplayMemberPath="Name"
+                                  SelectedValuePath="Name"
                                   SelectedValue="{Binding SelectedTableName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}"
                                   ItemsSource="{Binding Tables}" MinWidth="250">
                             <i:Interaction.Triggers>
@@ -50,7 +50,7 @@
             </StackPanel>
             <Separator DockPanel.Dock="Top" />
             <DockPanel DockPanel.Dock="Bottom">
-                <DataGrid DockPanel.Dock="Bottom" ItemsSource="{Binding SelectedMappingTable.Columns}"
+                <DataGrid DockPanel.Dock="Bottom" ItemsSource="{Binding EditColumns}"
                           SelectionMode="Single"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"

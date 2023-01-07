@@ -30,12 +30,4 @@ return Value;";
             UpdatedAt = DateTime.Now,
             CreatedAt = DateTime.Now
         };
-
-    public Script Renew(string name, string code) =>
-        this with
-        {
-            Name = name,
-            Code = code,
-            UpdatedAt = DateTime.Now
-        };
 }

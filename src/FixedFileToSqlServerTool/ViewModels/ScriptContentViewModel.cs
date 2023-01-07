@@ -8,7 +8,7 @@ using ICSharpCode.AvalonEdit.Document;
 namespace FixedFileToSqlServerTool.ViewModels;
 
 [INotifyPropertyChanged]
-public partial class ScriptContentViewModel : IPaneViewModel
+public partial class ScriptContentViewModel : IContentViewModel
 {
     public Models.Script Script { get; }
 
@@ -45,7 +45,7 @@ public partial class ScriptContentViewModel : IPaneViewModel
         this.LogDocument = new();
     }
 
-    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsSelectedPaneMessage(this));
+    partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsActiveMessage(this));
 
     [RelayCommand]
     private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
@@ -53,7 +53,7 @@ public partial class ScriptContentViewModel : IPaneViewModel
     [RelayCommand]
     private void Save()
     {
-        var newScript = this.Script.Renew(this.EditName, this.EditCodeDocument.Text);
+        var newScript = this.ToScript();
         _scriptRepository.Save(newScript);
 
         WeakReferenceMessenger.Default.Send(new SavedScriptMessage(newScript));
@@ -78,4 +78,12 @@ public partial class ScriptContentViewModel : IPaneViewModel
             this.LogDocument = new(ex.Message);
         }
     }
+
+    public Script ToScript() =>
+        this.Script with
+        {
+            Name = this.EditName,
+            Code = this.EditCodeDocument.Text,
+            UpdatedAt = DateTime.Now
+        };
 }
