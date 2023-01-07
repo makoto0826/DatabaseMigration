@@ -27,11 +27,15 @@ public class MigrationHandler
             bulkCopy.DestinationTableName = dataTable.TableName;
 
             await bulkCopy.WriteToServerAsync(dataTable);
-            await transaction?.CommitAsync();
+            await transaction!.CommitAsync();
         }
         catch (Exception ex)
         {
-            await transaction?.RollbackAsync();
+            if (transaction is not null)
+            {
+                await transaction.RollbackAsync();
+            }
+
             throw new ModelException("", ex);
         }
     }

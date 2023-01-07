@@ -29,15 +29,16 @@ public partial class App : Application
                         new DialogManager(viewLocator: new ViewLocator()),
                             viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton(x => new LiteDatabase(connectionString))
-                .AddSingleton(x => new ScriptRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new DatabaseSettingRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new TableRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new MappingTableRepository(x.GetRequiredService<LiteDatabase>()))
-                .AddSingleton(x => new ScriptRunner())
-                .AddSingleton(x => new DataTableCreator(x.GetRequiredService<ScriptRunner>()))
+                .AddSingleton<ScriptRepository>()
+                .AddSingleton<DatabaseSettingRepository>()
+                .AddSingleton<TableRepository>()
+                .AddSingleton<MappingTableRepository>()
+                .AddSingleton<ScriptRunner>()
+                .AddSingleton<DataTableCreator>()
+                .AddSingleton<MigrationHandler>()
                 .AddTransient<DatabaseSettingDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider()
-        ); ;
+        );
     }
 }

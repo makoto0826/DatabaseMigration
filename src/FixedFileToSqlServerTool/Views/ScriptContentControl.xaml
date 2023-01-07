@@ -54,7 +54,7 @@
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
         <DockPanel Grid.Row="2">
             <StackPanel DockPanel.Dock="Top">
-                <Label Content="出力" DockPanel.Dock="Top" />
+                <Label Content="ログ" DockPanel.Dock="Top" />
                 <Separator />
             </StackPanel>
             <ae:TextEditor DockPanel.Dock="Bottom"

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -28,6 +29,9 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunnable))]
     private MappingTable? _selectedMappingTable;
+
+    [ObservableProperty]
+    private TextDocument _logDocument;
 
     public bool IsRunnable
     {
@@ -60,6 +64,7 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
         _migrationHanlder = migrationHandler;
         _dialogService = dialogService;
 
+        this.LogDocument = new();
         this.MappingTables = new(mappingTables);
     }
 
@@ -77,6 +82,9 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     [RelayCommand]
     private async Task RunAsync()
     {
+        this.IsRunning = true;
+        this.LogDocument = new TextDocument("マイグレーション実行中です。しばらくお待ちください");
+
         try
         {
             await _migrationHanlder.HandleAsync(
@@ -87,7 +95,11 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
         }
         catch (ModelException ex)
         {
-            throw new ModelException("", ex);
+            this.LogDocument = new TextDocument(ex.Message);
+        }
+        finally
+        {
+            this.IsRunning = false;
         }
 
         this.DialogResult = true;

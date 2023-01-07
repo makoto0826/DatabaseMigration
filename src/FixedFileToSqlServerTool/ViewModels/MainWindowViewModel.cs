@@ -125,6 +125,7 @@ public partial class MainWindowViewModel
 
         if (databaseSetting is null)
         {
+            _dialogService.ShowMessageBox(this, text: "データベースの設定情報がありません", title: "エラー");
             return;
         }
 

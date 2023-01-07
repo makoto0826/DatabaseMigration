@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:view="clr-namespace:FixedFileToSqlServerTool.Views"
         mc:Ignorable="d"
         Title="マイグレーション"
@@ -20,6 +21,7 @@
             <RowDefinition Height="Auto"  />
             <RowDefinition Height="Auto"  />
             <RowDefinition Height="*"  />
+            <RowDefinition Height="100"  />
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
 
@@ -82,6 +84,19 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
+
+        <DockPanel Grid.Row="3">
+            <StackPanel DockPanel.Dock="Top">
+                <Label Content="ログ" DockPanel.Dock="Top" />
+                <Separator />
+            </StackPanel>
+            <ae:TextEditor DockPanel.Dock="Bottom"
+                IsReadOnly="True"
+                FontSize="10pt"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                Document="{Binding LogDocument,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
 
         <Border Grid.Row="4" Background="WhiteSmoke">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8">
