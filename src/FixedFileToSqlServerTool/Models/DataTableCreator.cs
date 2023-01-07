@@ -57,13 +57,13 @@ public class DataTableCreator
 
                     var value = line[column.Source.StartPosition..(column.Source.EndPosition + 1)];
 
-                    if (column.ConvertScript is not null)
+                    if (column.ConvertScript is null)
                     {
-                        row[column.Destination.Name] = await _scriptRunner.RunAsync(column.ConvertScript.Code, value);
+                        row[column.Destination.Name] = value;
                     }
                     else
                     {
-                        row[column.Destination.Name] = value;
+                        row[column.Destination.Name] = await _scriptRunner.RunAsync(column.ConvertScript.Code, value);
                     }
                 }
             }
