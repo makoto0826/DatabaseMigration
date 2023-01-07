@@ -1,4 +1,4 @@
-name: 'Publish FixedFileToSqlServerGenerator'
+name: "Publish FixedFileToSqlServerGenerator"
 
 on:
   workflow_dispatch:
@@ -7,36 +7,38 @@ on:
       - main
 
 env:
-  DOTNET_VERSION: '7.0.101'
-  PROJECT_PATH : 'src/FixedFileToSqlServerGenerator'
+  DOTNET_VERSION: "7.0.101"
+  PROJECT_PATH: "src/FixedFileToSqlServerGenerator"
+  PROJECT_NAME: "FixedFileToSqlServerGenerator"
 
 jobs:
   publish-fixed-file-to-sql-server-generator:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: |
-        cd ${{ env.PROJECT_PATH }}
-        dotnet build -c Release --no-restore
-        dotnet publish -c Release -o ./publish --version-suffix ${{ github.sha }}
+      - name: Install dependencies
+        run: dotnet restore
 
-    - name: action-zip
-      uses: montudor/action-zip@v1.0.0
-      with:
-        args: zip -r FixedFileToSqlServerGenerator.zip ./publish
+      - name: Build
+        run: |
+          cd ${{ env.PROJECT_PATH }}
+          dotnet build -c Release --no-restore
+          dotnet publish -c Release -o ./publish --version-suffix ${{ github.sha }}
 
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: FixedFileToSqlServerGenerator
-        path: FixedFileToSqlServerGenerator.zip
-        retention-days: 5
+      - name: "Zip Publish"
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./publish/*
+          dest: ${{ env.PROJECT_NAME }}.zip
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PROJECT_NAME }}
+          path: ${{ env.PROJECT_NAME }}.zip
+          retention-days: 5
