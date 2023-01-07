@@ -92,10 +92,13 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
                 this.SelectedMappingTable,
                 _databaseSetting
             );
+
+            _dialogService.ShowMessageBox(this, text: "マイグレーションに成功しました", title: "マイグレーション処理");
         }
         catch (ModelException ex)
         {
             this.LogDocument = new TextDocument(ex.Message);
+            return;
         }
         finally
         {

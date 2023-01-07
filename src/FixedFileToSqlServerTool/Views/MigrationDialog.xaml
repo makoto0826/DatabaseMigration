@@ -85,11 +85,10 @@
             </DataGrid>
         </StackPanel>
 
-        <DockPanel Grid.Row="3">
-            <StackPanel DockPanel.Dock="Top">
-                <Label Content="ログ" DockPanel.Dock="Top" />
-                <Separator />
-            </StackPanel>
+        <DockPanel Grid.Row="3" Margin="8">
+            <Separator DockPanel.Dock="Top" />
+            <Label Content="ログ" DockPanel.Dock="Top" />
+            <Separator DockPanel.Dock="Top" />
             <ae:TextEditor DockPanel.Dock="Bottom"
                 IsReadOnly="True"
                 FontSize="10pt"

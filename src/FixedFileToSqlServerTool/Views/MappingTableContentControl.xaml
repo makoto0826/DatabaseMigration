@@ -29,11 +29,11 @@
                         </StackPanel>
                     </Button>
                     <Separator Margin="4,0" />
-                    <Label Content="マッピングテーブル名" />
+                    <Label Content="マッピングテーブル" />
                     <TextBox Width="200" Text="{Binding EditName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <Separator Margin="4,0" />
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="テーブル名" />
+                        <Label Content="テーブル" />
                         <ComboBox x:Name="TableComboBox"
                                   DisplayMemberPath="Name"
                                   SelectedValuePath="Name"
