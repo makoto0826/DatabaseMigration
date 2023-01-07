@@ -33,7 +33,7 @@ jobs:
       - name: "Zip Publish"
         uses: vimtor/action-zip@v1
         with:
-          files: ${{ env.PROJECT_PATH }}/publish/*
+          files: ${{ env.PROJECT_PATH }}/publish
           dest: ${{ env.PROJECT_NAME }}.zip
 
       - name: "Upload Artifact"
