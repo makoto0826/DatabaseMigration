@@ -11,7 +11,7 @@ env:
   PROJECT_PATH : 'src/FixedFileToSqlServerGenerator'
 
 jobs:
-  publish:
+  publish-fixed-file-to-sql-server-generator:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
@@ -28,3 +28,15 @@ jobs:
         cd ${{ env.PROJECT_PATH }}
         dotnet build -c Release --no-restore
         dotnet publish -c Release -o ./publish --version-suffix ${{ github.sha }}
+
+    - name: action-zip
+      uses: montudor/action-zip@v1.0.0
+        with:
+          args: zip -qq -r FixedFileToSqlServerGenerator.zip ./publish
+
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+        with:
+          name: FixedFileToSqlServerGenerator
+          path: FixedFileToSqlServerGenerator.zip
+          retention-days: 5
