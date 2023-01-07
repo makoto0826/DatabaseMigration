@@ -113,7 +113,7 @@ public partial class MappingTableContentViewModel : IContentViewModel
     }
 
     [RelayCommand]
-    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
+    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedMessage(this));
 
     private MappingTable ToMappingTable() =>
         this.MappingTable with

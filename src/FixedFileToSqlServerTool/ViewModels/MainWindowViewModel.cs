@@ -49,13 +49,13 @@ public partial class MainWindowViewModel
         _scriptRepository = scriptRepository;
         _dialogService = dialogService;
 
-        WeakReferenceMessenger.Default.Register<ClosedPaneMessage>(this, this.HandleClosePane);
-        WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScript);
-        WeakReferenceMessenger.Default.Register<SavedMappingTableMessage>(this, this.HandleSavedMappingTable);
-        WeakReferenceMessenger.Default.Register<ChangedIsActiveMessage>(this, this.HandleIsActiveChanged);
+        WeakReferenceMessenger.Default.Register<ClosedMessage>(this, this.HandleClosedMessage);
+        WeakReferenceMessenger.Default.Register<SavedScriptMessage>(this, this.HandleSavedScriptMessage);
+        WeakReferenceMessenger.Default.Register<SavedMappingTableMessage>(this, this.HandleSavedMappingTableMessage);
+        WeakReferenceMessenger.Default.Register<ChangedIsActiveMessage>(this, this.HandleIsActiveMessage);
     }
 
-    private void HandleIsActiveChanged(object _, ChangedIsActiveMessage mesage)
+    private void HandleIsActiveMessage(object _, ChangedIsActiveMessage mesage)
     {
         if (mesage.Value is ScriptContentViewModel scriptVm)
         {
@@ -80,9 +80,9 @@ public partial class MainWindowViewModel
         }
     }
 
-    private void HandleClosePane(object _, ClosedPaneMessage message) => this.Documents.Remove(message.Value);
+    private void HandleClosedMessage(object _, ClosedMessage message) => this.Documents.Remove(message.Value);
 
-    private void HandleSavedScript(object _, SavedScriptMessage message)
+    private void HandleSavedScriptMessage(object _, SavedScriptMessage message)
     {
         var node = this.Scripts.FirstOrDefault(x => x.Script.Id == message.Value.Id);
 
@@ -96,7 +96,7 @@ public partial class MainWindowViewModel
         }
     }
 
-    private void HandleSavedMappingTable(object _, SavedMappingTableMessage message)
+    private void HandleSavedMappingTableMessage(object _, SavedMappingTableMessage message)
     {
         var node = this.MappingTables.FirstOrDefault(x => x.MappingTable.Id == message.Value.Id);
 

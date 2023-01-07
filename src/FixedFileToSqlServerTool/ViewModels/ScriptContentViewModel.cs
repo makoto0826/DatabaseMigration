@@ -48,7 +48,7 @@ public partial class ScriptContentViewModel : IContentViewModel
     partial void OnIsActiveChanged(bool value) => WeakReferenceMessenger.Default.Send(new ChangedIsActiveMessage(this));
 
     [RelayCommand]
-    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedPaneMessage(this));
+    private void Close() => WeakReferenceMessenger.Default.Send(new ClosedMessage(this));
 
     [RelayCommand]
     private void Save()
