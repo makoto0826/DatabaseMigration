@@ -39,4 +39,4 @@ jobs:
       with:
         name: FixedFileToSqlServerGenerator
         path: FixedFileToSqlServerGenerator.zip
-          retention-days: 5
+        retention-days: 5
