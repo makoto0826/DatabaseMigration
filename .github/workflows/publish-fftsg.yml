@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+    paths:
+      - '/src/FixedFileToSqlServerGenerator/**'
+
 env:
   DOTNET_VERSION: "7.0.101"
   PROJECT_PATH: "src/FixedFileToSqlServerGenerator"
