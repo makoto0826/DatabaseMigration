@@ -11,7 +11,7 @@ public class DataTableCreator
     public DataTableCreator(ScriptRunner scriptRunner) =>
         _scriptRunner = scriptRunner ?? throw new ArgumentNullException(nameof(scriptRunner));
 
-    public DataTable CreateEmpty(MappingTable table)
+    public DataTable Create(MappingTable table)
     {
         var dataTable = new DataTable()
         {
@@ -26,9 +26,9 @@ public class DataTableCreator
         return dataTable;
     }
 
-    public async Task<DataTable> CreateAsync(MappingTable table, Stream sourceStream)
+    public async Task<DataTable> CreateFromStreamAsync(MappingTable table, Stream sourceStream)
     {
-        var dataTable = CreateEmpty(table);
+        var dataTable = Create(table);
 
         string? line = null;
         using var reader = new StreamReader(sourceStream, Encoding.GetEncoding(table.Encoding));
@@ -43,7 +43,7 @@ public class DataTableCreator
                 {
                     if (column.GenerationScript is null)
                     {
-                        throw new ModelException("生成スクリプトが設定されていません");
+                        throw new ModelException($"列名:{column.Destination.Name} 生成スクリプトが設定されていません");
                     }
 
                     row[column.Destination.Name] = await _scriptRunner.RunAsync(column.GenerationScript.Code);
@@ -55,7 +55,7 @@ public class DataTableCreator
                         throw new ModelException($"列名:{column.Destination.Name} 開始位置または終了位置が設定されていません");
                     }
 
-                    var value = line[column.Source.StartPosition..column.Source.EndPosition];
+                    var value = line[column.Source.StartPosition..(column.Source.EndPosition + 1)];
 
                     if (column.ConvertScript is not null)
                     {

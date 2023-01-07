@@ -45,7 +45,11 @@ ORDER BY
                         Id = row.column_id,
                         Name = row.column_name,
                         Type = row.column_type,
-                        MaxLength = row.max_length,
+                        MaxLength = row.column_type switch
+                        {
+                            "nchar" or "nvarchar" => row.max_length / 2,
+                            _ => row.max_length
+                        },
                         IsNullable = row.is_nullable
                     })
                     .GroupBy(x => x.Id)

@@ -37,7 +37,7 @@ public class ScriptRunner
 
     public class ScriptVariables
     {
-        public string Value;
+        public string? Value;
 
         public ScriptVariables(string? value) => Value = value;
     }

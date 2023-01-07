@@ -63,7 +63,7 @@ public partial class MappingTableContentViewModel : IContentViewModel
         this.Tables = new(tables);
         this.TestDataDocument = new();
         this.LogDocument = new();
-        this.TestDataTable = _dataTableCreator.CreateEmpty(mappingTable);
+        this.TestDataTable = _dataTableCreator.Create(mappingTable);
 
         this.EditColumns = new ObservableCollection<MappingColumnViewModel>(
             mappingTable.Columns
@@ -93,7 +93,7 @@ public partial class MappingTableContentViewModel : IContentViewModel
     [RelayCommand]
     private async Task TestAsync()
     {
-        this.LogDocument = new("実行中...しばらくお待ちください");
+        this.LogDocument.Text = "実行中...しばらくお待ちください";
 
         try
         {
@@ -102,13 +102,13 @@ public partial class MappingTableContentViewModel : IContentViewModel
             memStream.Write(Encoding.GetEncoding(mappingTable.Encoding).GetBytes(this.TestDataDocument.Text));
             memStream.Position = 0;
 
-            var dataTable = await _dataTableCreator.CreateAsync(mappingTable, memStream);
+            var dataTable = await _dataTableCreator.CreateFromStreamAsync(mappingTable, memStream);
             this.TestDataTable = dataTable;
-            this.LogDocument = new();
+            this.LogDocument.Text = "";
         }
         catch (Exception ex)
         {
-            this.LogDocument = new(ex.Message);
+            this.LogDocument.Text = ex.Message;
         }
     }
 

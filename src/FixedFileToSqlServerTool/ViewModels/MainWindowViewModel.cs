@@ -131,8 +131,9 @@ public partial class MainWindowViewModel
 
         var vm = new MigrationDialogViewModel(
             this.MappingTables.Select(x => x.MappingTable),
+            Ioc.Default.GetRequiredService<Database>(),
             databaseSetting,
-            Ioc.Default.GetRequiredService<MigrationHandler>(),
+            Ioc.Default.GetRequiredService<DataTableCreator>(),
             _dialogService
         );
 

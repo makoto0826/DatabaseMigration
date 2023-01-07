@@ -62,20 +62,20 @@ public partial class ScriptContentViewModel : IContentViewModel
     [RelayCommand]
     private async Task TestAsync()
     {
-        this.LogDocument = new("実行中...しばらくお待ちください");
+        this.LogDocument.Text = "実行中...しばらくお待ちください";
 
         try
         {
             var result = await _scriptRunner.RunAsync(this.EditCodeDocument.Text, this.TestData);
 
-            this.LogDocument = new($"""
+            this.LogDocument.Text = $"""
 実行結果
 {result?.ToString() ?? ""}
-""");
+""";
         }
         catch (ModelException ex)
         {
-            this.LogDocument = new(ex.Message);
+            this.LogDocument.Text = ex.Message;
         }
     }
 

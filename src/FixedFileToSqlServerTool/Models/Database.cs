@@ -1,25 +1,17 @@
-using System.IO;
+using System.Data;
 using Microsoft.Data.SqlClient;
 
 namespace FixedFileToSqlServerTool.Models;
 
-public class MigrationHandler
+public class Database
 {
-    private readonly DataTableCreator _dataTableCreator;
-
-    public MigrationHandler(DataTableCreator dataTableCreator) =>
-        _dataTableCreator = dataTableCreator ?? throw new ArgumentNullException(nameof(dataTableCreator));
-
-    public async Task HandleAsync(string filePath, MappingTable mappingTable, DatabaseSetting databaseSetting)
+    public async Task CopyAsync(DataTable dataTable, DatabaseSetting databaseSetting)
     {
         var connection = databaseSetting.CreateConnection();
         SqlTransaction? transaction = null;
 
         try
         {
-            using var fs = new FileStream(filePath, FileMode.Open);
-            var dataTable = await _dataTableCreator.CreateAsync(mappingTable, fs);
-
             await connection.OpenAsync();
             transaction = await connection.BeginTransactionAsync() as SqlTransaction;
 
@@ -36,7 +28,7 @@ public class MigrationHandler
                 await transaction.RollbackAsync();
             }
 
-            throw new ModelException("", ex);
+            throw new ModelException(ex.Message, ex);
         }
     }
 }

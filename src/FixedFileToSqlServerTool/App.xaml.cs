@@ -35,7 +35,7 @@ public partial class App : Application
                 .AddSingleton<MappingTableRepository>()
                 .AddSingleton<ScriptRunner>()
                 .AddSingleton<DataTableCreator>()
-                .AddSingleton<MigrationHandler>()
+                .AddSingleton<Database>()
                 .AddTransient<DatabaseSettingDialogViewModel>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider()

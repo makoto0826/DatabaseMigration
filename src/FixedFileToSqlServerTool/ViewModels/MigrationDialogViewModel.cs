@@ -1,9 +1,11 @@
+using System.Data;
+using System.IO;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FixedFileToSqlServerTool.Models;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using ICSharpCode.AvalonEdit.Document;
 
 namespace FixedFileToSqlServerTool.ViewModels;
 
@@ -31,7 +33,16 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     private MappingTable? _selectedMappingTable;
 
     [ObservableProperty]
-    private TextDocument _logDocument;
+    private DataTable _targetDataTable;
+
+    [ObservableProperty]
+    private string _title;
+
+    [ObservableProperty]
+    private Visibility _fileVisibility;
+
+    [ObservableProperty]
+    private Visibility _runVisibility;
 
     public bool IsRunnable
     {
@@ -48,24 +59,30 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
     public List<MappingTable> MappingTables { get; }
 
+    private readonly Database _database;
+
     private readonly DatabaseSetting _databaseSetting;
 
-    private readonly MigrationHandler _migrationHanlder;
+    private readonly DataTableCreator _dataTableCreator;
 
     private readonly IDialogService _dialogService;
 
     public MigrationDialogViewModel(
         IEnumerable<MappingTable> mappingTables,
+        Database database,
         DatabaseSetting databaseSetting,
-        MigrationHandler migrationHandler,
+        DataTableCreator dataTableCreator,
         IDialogService dialogService)
     {
+        _database = database;
         _databaseSetting = databaseSetting;
-        _migrationHanlder = migrationHandler;
+        _dataTableCreator = dataTableCreator;
         _dialogService = dialogService;
 
-        this.LogDocument = new();
+        this.FileVisibility = Visibility.Visible;
+        this.RunVisibility = Visibility.Collapsed;
         this.MappingTables = new(mappingTables);
+        this.Title = "マイグレーション - ファイル選択";
     }
 
     [RelayCommand]
@@ -80,24 +97,42 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     }
 
     [RelayCommand]
-    private async Task RunAsync()
+    private async Task LoadAsync()
     {
         this.IsRunning = true;
-        this.LogDocument = new TextDocument("マイグレーション実行中です。しばらくお待ちください");
 
         try
         {
-            await _migrationHanlder.HandleAsync(
-                this.FilePath,
-                this.SelectedMappingTable,
-                _databaseSetting
-            );
+            using var stream = new FileStream(this.FilePath, FileMode.Open);
+            this.TargetDataTable = await _dataTableCreator.CreateFromStreamAsync(this.SelectedMappingTable, stream);
+            this.FileVisibility = Visibility.Collapsed;
+            this.RunVisibility = Visibility.Visible;
+            this.Title = $"マイグレーション - テーブル {this.SelectedMappingTable.TableName} 実行";
+        }
+        catch (ModelException ex)
+        {
+            _dialogService.ShowMessageBox(this, text: ex.Message, title: "マイグレーション処理");
+            return;
+        }
+        finally
+        {
+            this.IsRunning = false;
+        }
+    }
 
+    [RelayCommand]
+    private async Task RunAsync()
+    {
+        this.IsRunning = true;
+
+        try
+        {
+            await _database.CopyAsync(this.TargetDataTable, _databaseSetting);
             _dialogService.ShowMessageBox(this, text: "マイグレーションに成功しました", title: "マイグレーション処理");
         }
         catch (ModelException ex)
         {
-            this.LogDocument = new TextDocument(ex.Message);
+            _dialogService.ShowMessageBox(this, text: ex.Message, title: "マイグレーション処理");
             return;
         }
         finally
@@ -107,6 +142,14 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
         this.DialogResult = true;
         this.RequestClose?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void Back()
+    {
+        this.Title = "マイグレーション - ファイル選択";
+        this.FileVisibility = Visibility.Visible;
+        this.RunVisibility = Visibility.Collapsed;
     }
 
     [RelayCommand]
