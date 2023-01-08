@@ -93,7 +93,7 @@ ORDER BY
 
     public async Task WriteAsync(DataTable dataTable)
     {
-        var connection = CreateConnection();
+        using var connection = CreateConnection();
         SqlTransaction? transaction = null;
 
         try
@@ -118,7 +118,7 @@ ORDER BY
         }
     }
 
-    public SqlConnection CreateConnection()
+    private SqlConnection CreateConnection()
     {
         var builder = new SqlConnectionStringBuilder();
         builder.Add("Server", $"{_databaseSetting.Server},{_databaseSetting.Port ?? 1433}");
