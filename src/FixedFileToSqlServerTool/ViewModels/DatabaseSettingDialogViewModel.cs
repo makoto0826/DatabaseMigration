@@ -55,17 +55,17 @@ public partial class DatabaseSettingDialogViewModel : ObservableObject, IModalDi
     }
 
     [RelayCommand]
-    private async Task TestConnection()
+    private async Task TestConnectionAsync()
     {
         try
         {
             this.IsRunning = true;
-            using var connection = this.ToDatabaseSetting().CreateConnection();
-            await connection.OpenAsync();
+            var database = new Database(this.ToDatabaseSetting());
+            await database.ConnectTestAsync();
 
             _dialogService.ShowMessageBox(this, text: "接続のテストに成功しました", title: "接続テスト成功");
         }
-        catch (Exception ex)
+        catch (ModelException ex)
         {
             _dialogService.ShowMessageBox(this, text: ex.Message, title: "接続テスト失敗");
         }

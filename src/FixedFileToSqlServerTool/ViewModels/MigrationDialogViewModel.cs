@@ -61,8 +61,6 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
     private readonly Database _database;
 
-    private readonly DatabaseSetting _databaseSetting;
-
     private readonly DataTableCreator _dataTableCreator;
 
     private readonly IDialogService _dialogService;
@@ -70,12 +68,10 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
     public MigrationDialogViewModel(
         IEnumerable<MappingTable> mappingTables,
         Database database,
-        DatabaseSetting databaseSetting,
         DataTableCreator dataTableCreator,
         IDialogService dialogService)
     {
         _database = database;
-        _databaseSetting = databaseSetting;
         _dataTableCreator = dataTableCreator;
         _dialogService = dialogService;
 
@@ -127,7 +123,7 @@ public partial class MigrationDialogViewModel : ObservableObject, IModalDialogVi
 
         try
         {
-            await _database.CopyAsync(this.TargetDataTable, _databaseSetting);
+            await _database.WriteAsync(this.TargetDataTable);
             _dialogService.ShowMessageBox(this, text: "マイグレーションに成功しました", title: "マイグレーション処理");
         }
         catch (ModelException ex)

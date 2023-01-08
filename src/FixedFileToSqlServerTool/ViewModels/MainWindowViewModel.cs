@@ -131,8 +131,7 @@ public partial class MainWindowViewModel
 
         var vm = new MigrationDialogViewModel(
             this.MappingTables.Select(x => x.MappingTable),
-            Ioc.Default.GetRequiredService<Database>(),
-            databaseSetting,
+            new Database(databaseSetting),
             Ioc.Default.GetRequiredService<DataTableCreator>(),
             _dialogService
         );
@@ -156,27 +155,24 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task RefreshTable()
     {
-        var setting = _databaseSettingRepository.Get();
+        var databaseSetting = _databaseSettingRepository.Get();
 
-        if (setting is null)
+        if (databaseSetting is null)
         {
             _dialogService.ShowMessageBox(this, text: "データベースの設定情報がありません", title: "エラー");
             return;
         }
 
-        using var connection = setting.CreateConnection();
-
         try
         {
-            await connection.OpenAsync();
-            var repository = new MetadataRepository(connection);
-            var tables = await repository.GetTableDefinitionsAsync();
-
+            var database = new Database(databaseSetting);
+            var tables = await database.GetTableDefinitionsAsync();
             _tableRepository.Save(tables);
+
             this.Tables.Clear();
             this.Tables.AddRange(tables.Select(x => new TableTreeNodeViewModel(x)));
         }
-        catch (Exception ex)
+        catch (ModelException ex)
         {
             _dialogService.ShowMessageBox(this, text: ex.Message, title: "エラー");
         }
